@@ -2,253 +2,591 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
 <title>StyleAI — AI Fashion Stylist India</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500&display=swap" rel="stylesheet"/>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#ff2d78">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="StyleAI">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta name="description" content="AI-powered outfit generator for India. Get 3 personalised outfit ideas with Amazon & Flipkart shopping links in seconds.">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
-  --bg:#08080f;--bg2:#0f0f1a;--card:rgba(255,255,255,0.03);--card-b:rgba(255,255,255,0.08);
-  --card-h:rgba(255,255,255,0.055);--text:#f0ecf8;--muted:#8080a8;--muted2:#a0a0c0;
-  --accent:#c084fc;--accent2:#e0b0ff;--gold:#f5c842;--green:#22c55e;--red:#ef4444;
-  --amazon:#ff9900;--flipkart:#2874f0;--pink:#f472b6;
-  --r:12px;--r-lg:18px;--r-xl:24px;
+  --bg:#070709;
+  --surface:#0e0e12;
+  --surface2:#16161c;
+  --border:rgba(255,255,255,0.07);
+  --border-h:rgba(255,255,255,0.13);
+  --text:#f5f3ff;
+  --muted:#6b6880;
+  --muted2:#9896aa;
+  --pink:#ff2d78;
+  --pink2:#ff6aaa;
+  --purple:#9b5de5;
+  --cyan:#00d4ff;
+  --gold:#ffd166;
+  --green:#06d6a0;
+  --red:#ff4757;
+  --amazon:#ff9900;
+  --flipkart:#2874f0;
+  --r:10px;--r-lg:16px;--r-xl:22px;
 }
 html{scroll-behavior:smooth;}
-body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;overflow-x:hidden;}
-::-webkit-scrollbar{width:4px;}
-::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:2px;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden;}
+::-webkit-scrollbar{width:3px;}
+::-webkit-scrollbar-thumb{background:rgba(255,45,120,0.3);border-radius:2px;}
 
-/* OVERLAYS */
-.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(14px);z-index:3000;display:flex;align-items:center;justify-content:center;padding:20px;}
+/* ── NOISE TEXTURE OVERLAY ── */
+body::before{
+  content:'';position:fixed;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events:none;z-index:0;opacity:0.4;
+}
+
+/* ── OVERLAYS ── */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.88);backdrop-filter:blur(20px);z-index:3000;display:flex;align-items:center;justify-content:center;padding:20px;}
 .overlay.hidden{display:none!important;}
-@keyframes slideUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideUp{from{opacity:0;transform:translateY(32px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{to{opacity:1}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
 
-/* EMAIL MODAL */
-.em-box{background:#0e0e1e;border:0.5px solid rgba(192,132,252,0.2);border-radius:var(--r-xl);padding:40px 32px;max-width:420px;width:100%;text-align:center;animation:slideUp 0.4s ease;}
-.em-icon{font-size:44px;display:block;margin-bottom:14px;}
-.em-title{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;margin-bottom:8px;}
-.em-sub{font-size:13.5px;color:var(--muted2);line-height:1.7;margin-bottom:20px;}
-.em-input{width:100%;background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.12);border-radius:var(--r);padding:12px 16px;font-size:14px;color:var(--text);font-family:inherit;outline:none;margin-bottom:10px;transition:border-color 0.2s;}
-.em-input:focus{border-color:var(--accent);}
-.em-input::placeholder{color:#3a3a5a;}
-.em-btn{width:100%;padding:13px;background:linear-gradient(135deg,var(--accent),#a855f7);color:#fff;border:none;border-radius:var(--r);font-size:14.5px;font-weight:500;font-family:inherit;cursor:pointer;transition:all 0.2s;box-shadow:0 4px 20px rgba(192,132,252,0.25);}
-.em-btn:hover{transform:translateY(-1px);}
-.em-skip{margin-top:12px;font-size:12px;color:var(--muted);cursor:pointer;text-decoration:underline;}
-.em-badges{display:flex;justify-content:center;gap:16px;margin-top:14px;flex-wrap:wrap;}
-.em-badge{font-size:11.5px;color:var(--muted);}
+/* ── EMAIL MODAL ── */
+.em-box{
+  background:var(--surface);
+  border:1px solid rgba(255,45,120,0.2);
+  border-radius:var(--r-xl);
+  padding:44px 36px;max-width:420px;width:100%;
+  text-align:center;animation:slideUp 0.45s cubic-bezier(0.16,1,0.3,1);
+  position:relative;overflow:hidden;
+}
+.em-box::before{
+  content:'';position:absolute;top:-40px;left:50%;transform:translateX(-50%);
+  width:280px;height:180px;
+  background:radial-gradient(ellipse,rgba(255,45,120,0.12),transparent 70%);
+  pointer-events:none;
+}
+.em-icon{font-size:48px;display:block;margin-bottom:16px;animation:float 3s ease-in-out infinite;}
+.em-title{font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:1px;margin-bottom:8px;
+  background:linear-gradient(135deg,#fff 0%,var(--pink2) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.em-sub{font-size:14px;color:var(--muted2);line-height:1.7;margin-bottom:24px;}
+.em-input{
+  width:100%;background:rgba(255,255,255,0.04);
+  border:1px solid var(--border);border-radius:var(--r);
+  padding:13px 16px;font-size:14px;color:var(--text);
+  font-family:'DM Sans',sans-serif;outline:none;margin-bottom:10px;
+  transition:border-color 0.2s,box-shadow 0.2s;
+}
+.em-input:focus{border-color:var(--pink);box-shadow:0 0 0 3px rgba(255,45,120,0.1);}
+.em-input::placeholder{color:#2e2d38;}
+.em-btn{
+  width:100%;padding:14px;
+  background:linear-gradient(135deg,var(--pink),var(--purple));
+  color:#fff;border:none;border-radius:var(--r);
+  font-size:15px;font-weight:600;font-family:'DM Sans',sans-serif;
+  cursor:pointer;transition:all 0.2s;
+  box-shadow:0 4px 24px rgba(255,45,120,0.35);
+  letter-spacing:0.3px;
+}
+.em-btn:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(255,45,120,0.5);}
+.em-skip{margin-top:14px;font-size:12.5px;color:var(--muted);cursor:pointer;text-decoration:underline;}
+.em-badges{display:flex;justify-content:center;gap:18px;margin-top:16px;flex-wrap:wrap;}
+.em-badge{font-size:11.5px;color:var(--muted);display:flex;align-items:center;gap:4px;}
+.em-badge::before{content:'✓';color:var(--green);}
 
-/* UPGRADE MODAL */
-.up-box{background:#0e0e1e;border:0.5px solid rgba(192,132,252,0.25);border-radius:var(--r-xl);padding:40px 32px;max-width:440px;width:100%;text-align:center;animation:slideUp 0.4s ease;position:relative;overflow:hidden;}
-.up-box::before{content:'';position:absolute;top:-60px;left:50%;transform:translateX(-50%);width:300px;height:200px;background:radial-gradient(ellipse,rgba(192,132,252,0.1),transparent 70%);pointer-events:none;}
-.up-crown{font-size:48px;display:block;margin-bottom:14px;}
-.up-title{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;margin-bottom:8px;background:linear-gradient(135deg,var(--accent2),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-.up-sub{font-size:13.5px;color:var(--muted2);line-height:1.7;margin-bottom:18px;}
-.up-features{list-style:none;text-align:left;margin-bottom:20px;display:flex;flex-direction:column;gap:9px;}
-.up-features li{display:flex;align-items:center;gap:9px;font-size:13.5px;color:var(--muted2);}
-.up-features li::before{content:'v';width:20px;height:20px;border-radius:50%;background:rgba(34,197,94,0.12);border:0.5px solid rgba(34,197,94,0.3);display:inline-flex;align-items:center;justify-content:center;font-size:11px;color:var(--green);flex-shrink:0;}
-.up-price{font-family:'Syne',sans-serif;font-size:38px;font-weight:800;margin-bottom:4px;}
-.up-period{font-size:13px;color:var(--muted);margin-bottom:20px;}
-.up-btn{width:100%;padding:14px;background:linear-gradient(135deg,var(--accent),#a855f7);color:#fff;border:none;border-radius:var(--r);font-size:15px;font-weight:500;font-family:inherit;cursor:pointer;transition:all 0.2s;margin-bottom:10px;box-shadow:0 4px 20px rgba(192,132,252,0.25);}
-.up-btn:hover{transform:translateY(-1px);}
-.up-close{font-size:12px;color:var(--muted);cursor:pointer;text-decoration:underline;}
+/* ── UPGRADE MODAL ── */
+.up-box{
+  background:var(--surface);border:1px solid rgba(255,45,120,0.25);
+  border-radius:var(--r-xl);padding:44px 36px;max-width:440px;width:100%;
+  text-align:center;animation:slideUp 0.45s cubic-bezier(0.16,1,0.3,1);
+  position:relative;overflow:hidden;
+}
+.up-box::before{content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 50% -20%,rgba(255,45,120,0.08),transparent 60%);
+  pointer-events:none;}
+.up-crown{font-size:52px;display:block;margin-bottom:16px;}
+.up-title{
+  font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:1px;margin-bottom:8px;
+  background:linear-gradient(135deg,var(--pink2),var(--gold));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.up-sub{font-size:14px;color:var(--muted2);line-height:1.7;margin-bottom:20px;}
+.up-features{list-style:none;text-align:left;margin-bottom:24px;display:flex;flex-direction:column;gap:10px;}
+.up-features li{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--muted2);}
+.up-features li::before{
+  content:'✓';width:22px;height:22px;border-radius:50%;
+  background:rgba(6,214,160,0.12);border:1px solid rgba(6,214,160,0.3);
+  display:inline-flex;align-items:center;justify-content:center;
+  font-size:11px;color:var(--green);flex-shrink:0;
+}
+.up-price{font-family:'Bebas Neue',sans-serif;font-size:52px;letter-spacing:1px;line-height:1;margin-bottom:4px;}
+.up-period{font-size:13px;color:var(--muted);margin-bottom:24px;}
+.up-btn{
+  width:100%;padding:15px;
+  background:linear-gradient(135deg,var(--pink),var(--purple));
+  color:#fff;border:none;border-radius:var(--r);
+  font-size:15px;font-weight:600;font-family:'DM Sans',sans-serif;
+  cursor:pointer;transition:all 0.2s;margin-bottom:12px;
+  box-shadow:0 4px 24px rgba(255,45,120,0.35);letter-spacing:0.3px;
+}
+.up-btn:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(255,45,120,0.5);}
+.up-close{font-size:12.5px;color:var(--muted);cursor:pointer;text-decoration:underline;}
 
-/* ADMIN MODAL */
-.admin-modal{background:#0e0e1e;border:0.5px solid rgba(192,132,252,0.2);border-radius:var(--r-xl);padding:32px;max-width:520px;width:100%;max-height:90vh;overflow-y:auto;animation:slideUp 0.4s ease;}
-.admin-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;}
-.admin-title{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;}
-.admin-close{background:rgba(255,255,255,0.06);border:0.5px solid rgba(255,255,255,0.1);border-radius:8px;color:var(--muted2);font-size:17px;width:34px;height:34px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit;}
-.admin-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:18px;}
-.adm-stat{background:rgba(255,255,255,0.03);border:0.5px solid rgba(255,255,255,0.07);border-radius:12px;padding:14px;text-align:center;}
-.adm-stat-n{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--accent);}
+/* ── ADMIN MODAL ── */
+.admin-modal{
+  background:var(--surface);border:1px solid rgba(255,45,120,0.15);
+  border-radius:var(--r-xl);padding:32px;max-width:520px;width:100%;
+  max-height:90vh;overflow-y:auto;animation:slideUp 0.4s ease;
+}
+.admin-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;}
+.admin-title{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:1px;}
+.admin-close{
+  background:rgba(255,255,255,0.06);border:1px solid var(--border);
+  border-radius:8px;color:var(--muted2);font-size:16px;
+  width:34px;height:34px;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  font-family:'DM Sans',sans-serif;
+}
+.admin-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px;}
+.adm-stat{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:12px;padding:14px;text-align:center;}
+.adm-stat-n{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:1px;color:var(--pink);}
 .adm-stat-l{font-size:11px;color:var(--muted);margin-top:3px;}
-.adm-sec{background:rgba(255,255,255,0.03);border:0.5px solid rgba(255,255,255,0.07);border-radius:14px;padding:16px;margin-bottom:12px;}
-.adm-sec-title{font-size:13px;font-weight:500;color:var(--text);margin-bottom:11px;}
+.adm-sec{background:rgba(255,255,255,0.025);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:12px;}
+.adm-sec-title{font-size:12px;font-weight:600;color:var(--muted2);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.8px;}
 .adm-row{display:flex;gap:8px;}
-.adm-input{flex:1;background:rgba(255,255,255,0.04);border:0.5px solid rgba(255,255,255,0.1);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--text);font-family:inherit;outline:none;}
-.adm-input:focus{border-color:var(--accent);}
-.adm-btn{padding:9px 16px;background:linear-gradient(135deg,var(--accent),#a855f7);color:#fff;border:none;border-radius:8px;font-size:12.5px;font-weight:500;font-family:inherit;cursor:pointer;white-space:nowrap;}
-.adm-btn-b{background:rgba(59,130,246,0.15);color:#60a5fa;border:0.5px solid rgba(59,130,246,0.3);border-radius:8px;padding:8px 14px;font-size:12.5px;font-family:inherit;cursor:pointer;}
-.adm-btn-g{background:rgba(34,197,94,0.1);color:#4ade80;border:0.5px solid rgba(34,197,94,0.25);border-radius:8px;padding:8px 14px;font-size:12.5px;font-family:inherit;cursor:pointer;}
-.adm-btn-r{background:rgba(239,68,68,0.08);color:#f87171;border:0.5px solid rgba(239,68,68,0.2);border-radius:8px;padding:8px 14px;font-size:12.5px;font-family:inherit;cursor:pointer;}
+.adm-input{flex:1;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--text);font-family:'DM Sans',sans-serif;outline:none;}
+.adm-input:focus{border-color:var(--pink);}
+.adm-btn{padding:9px 16px;background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff;border:none;border-radius:8px;font-size:12.5px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;white-space:nowrap;}
+.adm-btn-b{background:rgba(0,212,255,0.1);color:var(--cyan);border:1px solid rgba(0,212,255,0.25);border-radius:8px;padding:8px 14px;font-size:12.5px;font-family:'DM Sans',sans-serif;cursor:pointer;}
+.adm-btn-g{background:rgba(6,214,160,0.1);color:var(--green);border:1px solid rgba(6,214,160,0.25);border-radius:8px;padding:8px 14px;font-size:12.5px;font-family:'DM Sans',sans-serif;cursor:pointer;}
+.adm-btn-r{background:rgba(255,71,87,0.08);color:#ff6b7a;border:1px solid rgba(255,71,87,0.2);border-radius:8px;padding:8px 14px;font-size:12.5px;font-family:'DM Sans',sans-serif;cursor:pointer;}
 .adm-device-btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
 
-/* TOAST */
-#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(60px);background:#1a1a2e;border:0.5px solid rgba(255,255,255,0.1);border-radius:30px;padding:11px 22px;font-size:13px;color:var(--text);z-index:9999;transition:transform 0.35s cubic-bezier(0.34,1.56,0.64,1);white-space:nowrap;pointer-events:none;max-width:90vw;text-overflow:ellipsis;overflow:hidden;}
+/* ── TOAST ── */
+#toast{
+  position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);
+  background:var(--surface2);border:1px solid rgba(255,45,120,0.25);
+  border-radius:50px;padding:11px 24px;font-size:13.5px;color:var(--text);
+  z-index:9999;transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  white-space:nowrap;pointer-events:none;max-width:90vw;
+  overflow:hidden;text-overflow:ellipsis;
+  box-shadow:0 8px 32px rgba(0,0,0,0.4);
+}
 #toast.show{transform:translateX(-50%) translateY(0);}
 
-/* USAGE BAR */
-#usage-bar{background:rgba(8,8,15,0.95);backdrop-filter:blur(16px);border-bottom:0.5px solid var(--card-b);padding:8px 20px;display:flex;align-items:center;justify-content:center;position:sticky;top:0;z-index:100;cursor:default;}
-.ub-inner{display:flex;align-items:center;gap:12px;max-width:580px;width:100%;}
-.ub-label{font-size:12px;color:var(--muted2);white-space:nowrap;}
-.ub-label em{color:var(--accent2);font-style:normal;font-weight:500;}
-.ub-track{flex:1;height:5px;background:rgba(255,255,255,0.07);border-radius:3px;overflow:hidden;}
-.ub-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--accent),var(--pink));transition:width 0.5s ease;}
-.ub-fill.warn{background:linear-gradient(90deg,#f59e0b,#ef4444);}
-.ub-fill.full{background:linear-gradient(90deg,var(--red),#ff4040);}
-.ub-upgrade{padding:5px 12px;background:rgba(192,132,252,0.1);border:0.5px solid rgba(192,132,252,0.25);border-radius:20px;color:var(--accent2);font-size:11.5px;font-family:inherit;cursor:pointer;white-space:nowrap;transition:all 0.2s;}
-.ub-upgrade:hover{background:rgba(192,132,252,0.2);}
+/* ── USAGE BAR ── */
+#usage-bar{
+  background:rgba(7,7,9,0.97);backdrop-filter:blur(24px);
+  border-bottom:1px solid var(--border);
+  padding:10px 20px;display:flex;align-items:center;justify-content:center;
+  position:sticky;top:0;z-index:100;cursor:default;
+}
+.ub-inner{display:flex;align-items:center;gap:12px;max-width:600px;width:100%;}
+.ub-label{font-size:11.5px;color:var(--muted2);white-space:nowrap;font-family:'Space Mono',monospace;}
+.ub-label em{color:var(--pink2);font-style:normal;}
+.ub-track{flex:1;height:4px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden;}
+.ub-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--pink),var(--purple));transition:width 0.6s ease;}
+.ub-fill.warn{background:linear-gradient(90deg,var(--gold),#ff8c00);}
+.ub-fill.full{background:linear-gradient(90deg,var(--red),#ff8c00);}
+.ub-upgrade{
+  padding:5px 14px;background:rgba(255,45,120,0.1);
+  border:1px solid rgba(255,45,120,0.25);border-radius:20px;
+  color:var(--pink2);font-size:11px;font-family:'DM Sans',sans-serif;
+  cursor:pointer;white-space:nowrap;transition:all 0.2s;font-weight:600;letter-spacing:0.3px;
+}
+.ub-upgrade:hover{background:rgba(255,45,120,0.2);}
 
-/* HERO */
-.hero{position:relative;text-align:center;padding:64px 24px 44px;overflow:hidden;}
-.hero::before{content:'';position:absolute;top:-80px;left:50%;transform:translateX(-50%);width:600px;height:400px;background:radial-gradient(ellipse,rgba(192,132,252,0.1),transparent 70%);pointer-events:none;}
-.hero-chip{display:inline-flex;align-items:center;gap:7px;background:rgba(192,132,252,0.08);border:0.5px solid rgba(192,132,252,0.2);border-radius:30px;padding:6px 16px;font-size:12px;color:var(--accent2);margin-bottom:22px;}
-.hero-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:blink 2s infinite;}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:0.4}}
-.hero h1{font-family:'Syne',sans-serif;font-size:clamp(32px,7vw,60px);font-weight:800;letter-spacing:-2px;line-height:1.0;margin-bottom:14px;background:linear-gradient(135deg,#e0b0ff 0%,#c084fc 40%,#f472b6 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-.hero p{font-size:16px;color:var(--muted2);max-width:500px;margin:0 auto 28px;line-height:1.75;font-weight:300;}
-.hero-stats{display:flex;justify-content:center;flex-wrap:wrap;border-top:0.5px solid var(--card-b);border-bottom:0.5px solid var(--card-b);margin-top:28px;}
-.hs{padding:14px 28px;border-right:0.5px solid var(--card-b);text-align:center;}
+/* ── HERO ── */
+.hero{
+  position:relative;text-align:center;
+  padding:60px 24px 52px;overflow:hidden;
+  background:radial-gradient(ellipse 80% 60% at 50% -10%,rgba(255,45,120,0.07),transparent);
+}
+.hero-tag{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(255,45,120,0.07);border:1px solid rgba(255,45,120,0.18);
+  border-radius:4px;padding:5px 14px;
+  font-family:'Space Mono',monospace;font-size:11px;color:var(--pink2);
+  margin-bottom:28px;letter-spacing:1px;text-transform:uppercase;
+}
+.hero-dot{width:6px;height:6px;border-radius:50%;background:var(--pink);animation:pulse 2s infinite;}
+.hero-logo{
+  font-family:'Bebas Neue',sans-serif;font-size:clamp(72px,18vw,140px);
+  line-height:0.9;letter-spacing:2px;margin-bottom:0;
+  background:linear-gradient(160deg,#ffffff 0%,#ffb3d1 35%,var(--pink) 65%,var(--purple) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  position:relative;display:inline-block;
+}
+.hero-logo::after{
+  content:'AI';position:absolute;top:4px;right:-2px;
+  font-size:0.22em;background:var(--pink);
+  -webkit-text-fill-color:#fff;background-clip:unset;
+  border-radius:4px;padding:2px 6px;letter-spacing:1px;
+  font-family:'Space Mono',monospace;font-weight:700;
+}
+.hero-sub{
+  font-size:clamp(13px,3vw,16px);color:var(--muted2);
+  max-width:420px;margin:20px auto 0;line-height:1.8;font-weight:300;
+}
+.hero-stripe{
+  display:flex;justify-content:center;
+  border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+  margin:32px 0 0;
+}
+.hs{padding:14px 20px;border-right:1px solid var(--border);text-align:center;}
 .hs:last-child{border-right:none;}
-.hs-n{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-.hs-l{font-size:11px;color:var(--muted);margin-top:3px;}
-@media(max-width:480px){.hs{padding:10px 14px;}.hs-n{font-size:17px;}}
+.hs-n{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;color:var(--pink2);}
+.hs-l{font-size:10px;color:var(--muted);margin-top:2px;text-transform:uppercase;letter-spacing:0.8px;}
+@media(max-width:480px){.hs{padding:10px 12px;}.hs-n{font-size:18px;}}
 
-/* MAIN */
-.main{max-width:780px;margin:0 auto;padding:24px 16px 80px;}
+/* ── MAIN WRAP ── */
+.main{max-width:760px;margin:0 auto;padding:28px 16px 100px;position:relative;z-index:1;}
 
-/* FEATURES STRIP */
-.feat-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px;}
-@media(max-width:500px){.feat-strip{grid-template-columns:1fr;}}
-.feat-item{background:var(--card);border:0.5px solid var(--card-b);border-radius:var(--r-lg);padding:14px 16px;display:flex;align-items:flex-start;gap:11px;transition:border-color 0.3s;}
-.feat-item:hover{border-color:rgba(192,132,252,0.2);}
-.feat-ico{font-size:20px;flex-shrink:0;}
-.feat-t{font-size:13px;font-weight:500;color:var(--text);margin-bottom:3px;}
+/* ── FEATURE STRIP ── */
+.feat-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:28px;}
+@media(max-width:500px){.feat-strip{grid-template-columns:1fr;gap:8px;}}
+.feat-item{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r-lg);padding:16px;
+  transition:border-color 0.25s,background 0.25s;
+  display:flex;flex-direction:column;gap:8px;
+}
+.feat-item:hover{border-color:rgba(255,45,120,0.25);background:rgba(255,45,120,0.03);}
+.feat-ico{font-size:22px;}
+.feat-t{font-size:13px;font-weight:600;color:var(--text);}
 .feat-d{font-size:11.5px;color:var(--muted);line-height:1.5;}
 
-/* FORM CARD */
-.form-card{background:var(--card);border:0.5px solid var(--card-b);border-radius:var(--r-xl);padding:28px;margin-bottom:20px;}
-.form-card-title{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;margin-bottom:6px;display:flex;align-items:center;gap:9px;}
-.form-card-sub{font-size:13px;color:var(--muted);margin-bottom:22px;}
+/* ── FORM CARD ── */
+.form-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r-xl);padding:28px;margin-bottom:20px;
+  position:relative;overflow:hidden;
+}
+.form-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--pink),var(--purple),transparent);
+}
+.form-card-title{
+  font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:1px;
+  margin-bottom:4px;display:flex;align-items:center;gap:10px;
+}
+.form-card-sub{font-size:13px;color:var(--muted);margin-bottom:24px;}
 
-/* FORM GRID */
+/* ── FORM FIELDS ── */
 .fg-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
 .fg-grid.three{grid-template-columns:1fr 1fr 1fr;}
 @media(max-width:560px){.fg-grid,.fg-grid.three{grid-template-columns:1fr;}}
-.fg{display:flex;flex-direction:column;gap:5px;}
+.fg{display:flex;flex-direction:column;gap:6px;}
 .fg.full{grid-column:1/-1;}
-.fg label{font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;}
-.fg input,.fg select,.fg textarea{background:rgba(255,255,255,0.04);border:0.5px solid rgba(255,255,255,0.1);border-radius:var(--r);padding:11px 13px;font-size:13.5px;color:var(--text);font-family:inherit;outline:none;transition:all 0.2s;resize:vertical;width:100%;}
-.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--accent);background:rgba(192,132,252,0.03);box-shadow:0 0 0 3px rgba(192,132,252,0.07);}
-.fg input::placeholder,.fg textarea::placeholder{color:#333355;}
-.fg select option{background:#111118;}
-.fg.error input,.fg.error select{border-color:var(--red);background:rgba(239,68,68,0.04);}
-.fg-error-msg{font-size:11.5px;color:var(--red);margin-top:3px;display:none;}
+.fg label{
+  font-size:10px;font-weight:700;color:var(--muted);
+  text-transform:uppercase;letter-spacing:1.2px;
+  font-family:'Space Mono',monospace;
+}
+.fg input,.fg select,.fg textarea{
+  background:rgba(255,255,255,0.03);
+  border:1px solid var(--border);border-radius:var(--r);
+  padding:12px 14px;font-size:14px;color:var(--text);
+  font-family:'DM Sans',sans-serif;outline:none;
+  transition:all 0.2s;resize:vertical;width:100%;
+}
+.fg input:focus,.fg select:focus,.fg textarea:focus{
+  border-color:var(--pink);background:rgba(255,45,120,0.03);
+  box-shadow:0 0 0 3px rgba(255,45,120,0.08);
+}
+.fg input::placeholder,.fg textarea::placeholder{color:#1e1d26;}
+.fg select option{background:#0e0e12;}
+.fg.error input,.fg.error select{border-color:var(--red);background:rgba(255,71,87,0.04);}
+.fg-error-msg{font-size:11px;color:var(--red);margin-top:2px;display:none;}
 .fg.error .fg-error-msg{display:block;}
 
-/* DIVIDER */
-.form-divider{display:flex;align-items:center;gap:12px;margin:18px 0 14px;}
-.form-divider-line{flex:1;height:0.5px;background:var(--card-b);}
-.form-divider-label{font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:1px;white-space:nowrap;}
+/* ── DIVIDER ── */
+.form-divider{display:flex;align-items:center;gap:12px;margin:20px 0 16px;}
+.form-divider-line{flex:1;height:1px;background:var(--border);}
+.form-divider-label{
+  font-size:10px;font-weight:700;color:var(--muted);
+  text-transform:uppercase;letter-spacing:1.2px;
+  font-family:'Space Mono',monospace;white-space:nowrap;
+}
 
-/* STYLE PILLS */
-.style-pills{display:flex;gap:7px;flex-wrap:wrap;}
-.spill{padding:7px 14px;background:transparent;border:0.5px solid rgba(255,255,255,0.1);border-radius:20px;color:var(--muted);font-size:12.5px;font-family:inherit;cursor:pointer;transition:all 0.2s;}
-.spill:hover{border-color:var(--accent);color:var(--accent2);}
-.spill.on{background:rgba(192,132,252,0.1);border-color:var(--accent);color:var(--accent2);font-weight:500;}
-
-/* GENERATE BUTTON */
-.gen-btn{width:100%;padding:15px;background:linear-gradient(135deg,var(--accent),#a855f7);color:#fff;border:none;border-radius:var(--r);font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;transition:all 0.25s;margin-top:8px;box-shadow:0 4px 22px rgba(192,132,252,0.25);display:flex;align-items:center;justify-content:center;gap:9px;letter-spacing:0.2px;}
-.gen-btn:hover{transform:translateY(-1px);box-shadow:0 6px 30px rgba(192,132,252,0.38);}
+/* ── GENERATE BUTTON ── */
+.gen-btn{
+  width:100%;padding:17px;
+  background:linear-gradient(135deg,var(--pink) 0%,var(--purple) 100%);
+  color:#fff;border:none;border-radius:var(--r);
+  font-size:16px;font-weight:700;font-family:'DM Sans',sans-serif;
+  cursor:pointer;transition:all 0.25s;margin-top:10px;
+  box-shadow:0 4px 28px rgba(255,45,120,0.3);
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  letter-spacing:0.4px;position:relative;overflow:hidden;
+}
+.gen-btn::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,0.1),transparent);
+  opacity:0;transition:opacity 0.2s;
+}
+.gen-btn:hover::before{opacity:1;}
+.gen-btn:hover{transform:translateY(-2px);box-shadow:0 8px 40px rgba(255,45,120,0.5);}
 .gen-btn:active{transform:scale(0.98);}
-.gen-btn:disabled{opacity:0.35;cursor:not-allowed;transform:none;box-shadow:none;}
+.gen-btn:disabled{opacity:0.3;cursor:not-allowed;transform:none;box-shadow:none;}
 .free-note{text-align:center;font-size:12px;color:var(--muted);margin-top:10px;}
-.free-note em{color:var(--accent2);font-style:normal;}
+.free-note em{color:var(--pink2);font-style:normal;}
 
-/* LOADING */
-.loading-wrap{display:none;flex-direction:column;align-items:center;gap:16px;padding:32px 0;}
+/* ── LOADING ── */
+.loading-wrap{display:none;flex-direction:column;align-items:center;gap:20px;padding:40px 0;}
 .loading-wrap.show{display:flex;}
-.big-spinner{width:40px;height:40px;border:3px solid rgba(192,132,252,0.15);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;}
-@keyframes spin{to{transform:rotate(360deg)}}
-.loading-text{font-size:14px;color:var(--muted);}
-.loading-tips{display:flex;flex-direction:column;gap:6px;width:100%;max-width:400px;}
-.ltip{font-size:12.5px;color:var(--muted);padding:7px 12px;background:rgba(192,132,252,0.05);border-radius:var(--r);border-left:2px solid var(--accent);opacity:0;animation:fadeIn 0.5s ease forwards;}
-@keyframes fadeIn{to{opacity:1}}
+.load-ring{
+  width:48px;height:48px;border-radius:50%;
+  border:2px solid transparent;
+  border-top-color:var(--pink);border-right-color:rgba(255,45,120,0.3);
+  animation:spin 0.9s linear infinite;
+}
+.loading-text{
+  font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;
+  color:var(--muted2);
+}
+.loading-tips{display:flex;flex-direction:column;gap:8px;width:100%;max-width:380px;}
+.ltip{
+  font-size:12.5px;color:var(--muted2);
+  padding:8px 14px;background:rgba(255,45,120,0.04);
+  border-radius:var(--r);border-left:2px solid var(--pink);
+  opacity:0;animation:fadeIn 0.5s ease forwards;
+  font-family:'Space Mono',monospace;
+}
 
-/* RESULTS */
-.result-lbl{font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px;}
+/* ── RESULT LABEL ── */
+.result-lbl{
+  font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;
+  color:var(--muted);text-transform:uppercase;margin-bottom:16px;
+}
 
-/* OUTFIT CARD */
-.outfit-card{background:var(--card);border:0.5px solid var(--card-b);border-radius:var(--r-xl);padding:24px;margin-bottom:20px;transition:border-color 0.3s;}
-.outfit-card:hover{border-color:rgba(192,132,252,0.2);}
-.outfit-top-row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px;}
-.outfit-num{font-size:11px;font-weight:500;color:var(--accent);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:5px;}
-.outfit-name{font-family:'Syne',sans-serif;font-size:19px;font-weight:700;margin-bottom:6px;}
+/* ── OUTFIT CARD ── */
+.outfit-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r-xl);padding:0;margin-bottom:20px;
+  overflow:hidden;transition:border-color 0.25s,transform 0.25s;
+}
+.outfit-card:hover{border-color:rgba(255,45,120,0.2);transform:translateY(-2px);}
+
+.outfit-card-header{
+  padding:24px 24px 20px;
+  border-bottom:1px solid var(--border);
+  background:linear-gradient(135deg,rgba(255,45,120,0.04),transparent);
+  display:flex;align-items:flex-start;justify-content:space-between;gap:12px;
+}
+.outfit-num{
+  font-family:'Space Mono',monospace;font-size:10px;
+  color:var(--pink);text-transform:uppercase;letter-spacing:2px;margin-bottom:6px;
+}
+.outfit-name{
+  font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:1px;
+  margin-bottom:6px;line-height:1;
+}
 .outfit-desc{font-size:13px;color:var(--muted2);line-height:1.7;}
-.match-badge{background:rgba(34,197,94,0.1);border:0.5px solid rgba(34,197,94,0.2);border-radius:var(--r);padding:8px 14px;text-align:center;flex-shrink:0;}
-.match-n{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--green);line-height:1;}
-.match-l{font-size:10px;color:var(--muted);margin-top:2px;}
+.match-badge{
+  background:rgba(6,214,160,0.08);border:1px solid rgba(6,214,160,0.2);
+  border-radius:var(--r);padding:10px 14px;text-align:center;flex-shrink:0;min-width:64px;
+}
+.match-n{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--green);line-height:1;letter-spacing:1px;}
+.match-l{font-size:9px;color:var(--muted);margin-top:2px;text-transform:uppercase;letter-spacing:0.8px;}
 
-/* OUTFIT BREAKDOWN — new detailed section */
-.outfit-breakdown{background:rgba(255,255,255,0.02);border:0.5px solid rgba(255,255,255,0.06);border-radius:var(--r-lg);padding:16px;margin-bottom:14px;}
-.breakdown-title{font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;}
-.breakdown-row{display:flex;align-items:flex-start;gap:12px;padding:9px 0;border-bottom:0.5px solid rgba(255,255,255,0.05);}
+/* ── BREAKDOWN ── */
+.outfit-body{padding:20px 24px;}
+.outfit-breakdown{
+  background:rgba(255,255,255,0.015);border:1px solid var(--border);
+  border-radius:var(--r-lg);overflow:hidden;margin-bottom:16px;
+}
+.breakdown-title{
+  font-size:10px;font-weight:700;color:var(--muted);
+  text-transform:uppercase;letter-spacing:1.2px;
+  padding:11px 16px;border-bottom:1px solid var(--border);
+  font-family:'Space Mono',monospace;
+  background:rgba(255,255,255,0.02);
+}
+.breakdown-row{
+  display:flex;align-items:flex-start;gap:14px;
+  padding:14px 16px;border-bottom:1px solid var(--border);
+  transition:background 0.2s;
+}
 .breakdown-row:last-child{border-bottom:none;}
-.breakdown-icon{font-size:18px;flex-shrink:0;width:28px;text-align:center;}
-.breakdown-label{font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;min-width:80px;margin-top:2px;}
+.breakdown-row:hover{background:rgba(255,45,120,0.03);}
+.breakdown-icon{font-size:20px;flex-shrink:0;width:30px;text-align:center;margin-top:1px;}
+.breakdown-label{
+  font-size:10px;font-weight:700;color:var(--muted);
+  text-transform:uppercase;letter-spacing:0.8px;
+  min-width:72px;margin-top:3px;font-family:'Space Mono',monospace;
+}
 .breakdown-content{flex:1;}
-.breakdown-item-name{font-size:13.5px;font-weight:500;color:var(--text);margin-bottom:2px;}
-.breakdown-item-why{font-size:12px;color:var(--accent2);font-style:italic;margin-bottom:4px;line-height:1.4;}
-.breakdown-item-price{font-size:12px;color:var(--muted);margin-bottom:6px;}
-.breakdown-item-links{display:flex;gap:5px;flex-wrap:wrap;}
-.bl{padding:4px 10px;border:0.5px solid rgba(255,255,255,0.1);border-radius:6px;font-size:11px;color:var(--muted2);text-decoration:none;transition:all 0.15s;display:inline-flex;align-items:center;gap:4px;}
+.breakdown-item-name{font-size:14px;font-weight:500;color:var(--text);margin-bottom:2px;}
+.breakdown-item-why{font-size:12px;color:var(--pink2);font-style:italic;margin-bottom:5px;line-height:1.4;}
+.breakdown-item-price{font-size:12px;color:var(--muted);margin-bottom:8px;font-family:'Space Mono',monospace;}
+.breakdown-item-links{display:flex;gap:6px;flex-wrap:wrap;}
+.bl{
+  padding:4px 11px;border:1px solid var(--border);border-radius:6px;
+  font-size:11px;color:var(--muted2);text-decoration:none;
+  transition:all 0.15s;display:inline-flex;align-items:center;gap:5px;
+  font-weight:500;
+}
 .bl:hover{background:rgba(255,255,255,0.05);color:var(--text);}
-.bl-amz{border-color:rgba(255,153,0,0.2);color:var(--amazon);}
+.bl-amz{border-color:rgba(255,153,0,0.25);color:var(--amazon);}
 .bl-amz:hover{background:rgba(255,153,0,0.08);}
-.bl-fk{border-color:rgba(40,116,240,0.2);color:#6aa0ff;}
+.bl-fk{border-color:rgba(40,116,240,0.25);color:#6aa0ff;}
 .bl-fk:hover{background:rgba(40,116,240,0.08);}
-.bl-img{border-color:rgba(192,132,252,0.2);color:var(--accent2);}
-.bl-img:hover{background:rgba(192,132,252,0.08);}
+.bl-img{border-color:rgba(255,45,120,0.2);color:var(--pink2);}
+.bl-img:hover{background:rgba(255,45,120,0.08);}
 .bl-logo{width:12px;height:12px;border-radius:2px;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;}
 .amz-logo{background:var(--amazon);color:#000;}
 .fk-logo{background:var(--flipkart);color:#fff;}
 
-/* TOTAL + TAGS + FOOTER */
-.total-bar{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:rgba(192,132,252,0.06);border:0.5px solid rgba(192,132,252,0.15);border-radius:var(--r);margin-bottom:12px;}
-.total-label{font-size:13px;color:var(--muted);}
-.total-amt{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;color:var(--accent2);}
+/* ── TOTAL BAR ── */
+.total-bar{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:12px 16px;
+  background:rgba(255,45,120,0.05);border:1px solid rgba(255,45,120,0.12);
+  border-radius:var(--r);margin-bottom:14px;
+}
+.total-label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;font-family:'Space Mono',monospace;}
+.total-amt{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;color:var(--pink2);}
 .over{color:var(--red)!important;}
-.over-bar{border-color:rgba(239,68,68,0.3)!important;background:rgba(239,68,68,0.05)!important;}
-.vibe-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
-.vtag{padding:3px 10px;background:rgba(192,132,252,0.08);border:0.5px solid rgba(192,132,252,0.15);border-radius:20px;font-size:11px;color:var(--accent2);}
-.wtag{padding:3px 10px;background:rgba(245,200,66,0.08);border:0.5px solid rgba(245,200,66,0.15);border-radius:20px;font-size:11px;color:var(--gold);}
-.tip-box{padding:12px 14px;background:rgba(255,255,255,0.02);border-left:2px solid var(--accent);border-radius:0 var(--r) var(--r) 0;font-size:13px;color:var(--muted2);line-height:1.6;margin-bottom:12px;}
-.outfit-actions{display:flex;gap:8px;flex-wrap:wrap;}
-.act-btn{padding:8px 16px;border:0.5px solid rgba(255,255,255,0.1);border-radius:var(--r);font-size:12.5px;color:var(--muted2);font-family:inherit;cursor:pointer;background:transparent;transition:all 0.2s;display:inline-flex;align-items:center;gap:6px;}
-.act-btn:hover{background:rgba(255,255,255,0.05);color:var(--text);}
-.act-btn.copied{color:var(--green);border-color:rgba(34,197,94,0.3);}
-.pin-btn{border-color:rgba(230,0,35,0.2);color:#e06070;}
-.pin-btn:hover{background:rgba(230,0,35,0.05);}
-.share-btn{background:linear-gradient(135deg,rgba(192,132,252,0.15),rgba(244,114,182,0.1));border:0.5px solid rgba(192,132,252,0.35);border-radius:var(--r);color:var(--accent2);font-size:13px;font-weight:500;font-family:inherit;cursor:pointer;padding:10px 20px;display:inline-flex;align-items:center;gap:8px;transition:all 0.25s;width:100%;justify-content:center;margin-top:10px;}
-.share-btn:hover{background:linear-gradient(135deg,rgba(192,132,252,0.25),rgba(244,114,182,0.18));border-color:rgba(192,132,252,0.6);transform:translateY(-1px);box-shadow:0 4px 18px rgba(192,132,252,0.18);}
-.share-btn:active{transform:scale(0.98);}
-.share-btn.shared{color:var(--green);border-color:rgba(34,197,94,0.4);background:rgba(34,197,94,0.08);}
-.share-icon{font-size:16px;}
+.over-bar{border-color:rgba(255,71,87,0.3)!important;background:rgba(255,71,87,0.05)!important;}
 
-/* REGENERATE */
-.regen-btn{width:100%;padding:12px;background:transparent;border:0.5px solid rgba(192,132,252,0.25);border-radius:var(--r);font-size:14px;font-weight:500;font-family:inherit;cursor:pointer;color:var(--accent2);transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:8px;}
-.regen-btn:hover{background:rgba(192,132,252,0.08);}
+/* ── VIBE TAGS ── */
+.vibe-tags{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px;}
+.vtag{
+  padding:4px 12px;background:rgba(155,93,229,0.08);
+  border:1px solid rgba(155,93,229,0.2);border-radius:20px;
+  font-size:11px;color:#c4a0ff;font-weight:500;letter-spacing:0.3px;
+}
+.wtag{
+  padding:4px 12px;background:rgba(255,209,102,0.08);
+  border:1px solid rgba(255,209,102,0.2);border-radius:20px;
+  font-size:11px;color:var(--gold);font-weight:500;
+}
 
-.error-box{padding:16px;border:0.5px solid rgba(239,68,68,0.3);border-radius:var(--r);color:#fca5a5;font-size:14px;line-height:1.7;margin-bottom:16px;}
+/* ── STYLE TIP ── */
+.tip-box{
+  padding:12px 16px;
+  background:rgba(0,212,255,0.04);
+  border-left:2px solid var(--cyan);
+  border-radius:0 var(--r) var(--r) 0;
+  font-size:13px;color:var(--muted2);line-height:1.6;margin-bottom:14px;
+}
 
-/* FOOTER */
-.site-footer{text-align:center;padding:28px 24px;border-top:0.5px solid var(--card-b);}
-.site-footer p{font-size:12.5px;color:var(--muted);line-height:1.7;}
-.site-footer em{color:var(--accent2);font-style:normal;}
+/* ── OUTFIT ACTIONS ── */
+.outfit-actions{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;}
+.act-btn{
+  padding:9px 18px;border:1px solid var(--border);border-radius:var(--r);
+  font-size:12.5px;color:var(--muted2);font-family:'DM Sans',sans-serif;
+  cursor:pointer;background:transparent;transition:all 0.2s;
+  display:inline-flex;align-items:center;gap:6px;font-weight:500;
+}
+.act-btn:hover{background:rgba(255,255,255,0.05);color:var(--text);border-color:var(--border-h);}
+.act-btn.copied{color:var(--green);border-color:rgba(6,214,160,0.3);}
+.pin-btn{border-color:rgba(255,71,87,0.2);color:#ff7a8a;}
+.pin-btn:hover{background:rgba(255,71,87,0.06);}
+.share-btn{
+  background:linear-gradient(135deg,rgba(255,45,120,0.12),rgba(155,93,229,0.08));
+  border:1px solid rgba(255,45,120,0.3);border-radius:var(--r);
+  color:var(--pink2);font-size:13.5px;font-weight:600;
+  font-family:'DM Sans',sans-serif;cursor:pointer;padding:12px 20px;
+  display:inline-flex;align-items:center;gap:9px;
+  transition:all 0.25s;width:100%;justify-content:center;letter-spacing:0.3px;
+}
+.share-btn:hover{
+  background:linear-gradient(135deg,rgba(255,45,120,0.22),rgba(155,93,229,0.16));
+  border-color:rgba(255,45,120,0.55);transform:translateY(-1px);
+  box-shadow:0 6px 24px rgba(255,45,120,0.2);
+}
+.share-btn.shared{color:var(--green);border-color:rgba(6,214,160,0.4);background:rgba(6,214,160,0.06);}
+.share-icon{font-size:15px;}
+
+/* ── ERROR ── */
+.error-box{
+  padding:18px;border:1px solid rgba(255,71,87,0.25);
+  border-radius:var(--r-lg);color:#ff9aa3;font-size:14px;line-height:1.7;
+  background:rgba(255,71,87,0.04);margin-bottom:16px;
+}
+
+/* ── REGEN BUTTON ── */
+.regen-btn{
+  width:100%;padding:13px;background:transparent;
+  border:1px solid rgba(255,45,120,0.2);border-radius:var(--r);
+  font-size:14px;font-weight:600;font-family:'DM Sans',sans-serif;
+  cursor:pointer;color:var(--pink2);transition:all 0.2s;
+  display:flex;align-items:center;justify-content:center;gap:9px;
+  margin-top:8px;letter-spacing:0.3px;
+}
+.regen-btn:hover{background:rgba(255,45,120,0.06);border-color:rgba(255,45,120,0.4);}
+
+/* ── HISTORY ── */
+.hist-btn{
+  width:100%;padding:12px;background:transparent;
+  border:1px solid var(--border);border-radius:var(--r);
+  font-size:13px;color:var(--muted2);font-family:'DM Sans',sans-serif;
+  cursor:pointer;transition:all 0.2s;
+  display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:20px;
+}
+.hist-btn:hover{border-color:rgba(255,45,120,0.25);color:var(--pink2);background:rgba(255,45,120,0.04);}
+.hist-section{margin-bottom:24px;}
+.hist-title{
+  font-family:'Space Mono',monospace;font-size:10px;font-weight:700;
+  color:var(--muted);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:12px;
+}
+.hist-list{display:flex;flex-direction:column;gap:8px;}
+.hist-item{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r-lg);padding:14px 16px;cursor:pointer;
+  transition:all 0.2s;display:flex;align-items:center;justify-content:space-between;
+}
+.hist-item:hover{border-color:rgba(255,45,120,0.2);background:rgba(255,45,120,0.03);}
+.hist-item-left{flex:1;}
+.hist-item-date{font-size:10px;color:var(--muted);margin-bottom:3px;font-family:'Space Mono',monospace;}
+.hist-item-label{font-size:13.5px;color:var(--text);font-weight:600;}
+.hist-item-sub{font-size:12px;color:var(--muted2);margin-top:2px;}
+.hist-item-del{
+  background:rgba(255,71,87,0.08);border:1px solid rgba(255,71,87,0.15);
+  border-radius:7px;color:#ff6b7a;font-size:11px;padding:5px 10px;
+  cursor:pointer;font-family:'DM Sans',sans-serif;flex-shrink:0;margin-left:10px;
+}
+.hist-empty{text-align:center;padding:28px;color:var(--muted);font-size:13px;}
+
+/* ── INSTALL BUTTON ── */
+#pwa-install-btn{
+  display:none;align-items:center;gap:7px;
+  background:rgba(255,45,120,0.07);border:1px solid rgba(255,45,120,0.18);
+  border-radius:20px;padding:6px 16px;font-size:12px;color:var(--pink2);
+  font-family:'DM Sans',sans-serif;cursor:pointer;margin:0 auto 16px;
+  transition:all 0.2s;font-weight:500;letter-spacing:0.3px;
+}
+#pwa-install-btn:hover{background:rgba(255,45,120,0.14);}
+
+/* ── FOOTER ── */
+.site-footer{
+  text-align:center;padding:32px 24px;
+  border-top:1px solid var(--border);
+  background:linear-gradient(0deg,rgba(255,45,120,0.03),transparent);
+}
+.site-footer p{font-size:12px;color:var(--muted);line-height:1.9;}
+.site-footer em{color:var(--pink2);font-style:normal;font-weight:600;}
 </style>
 </head>
 <body>
 
-<!-- EMAIL MODAL -->
+<!-- ── EMAIL MODAL ── -->
 <div class="overlay hidden" id="email-overlay">
   <div class="em-box">
     <span class="em-icon">✨</span>
-    <div class="em-title">Get Free Outfit Styling</div>
-    <div class="em-sub">Enter your email to unlock <strong style="color:var(--accent2)">10 free AI outfit generations</strong> per day. No credit card needed.</div>
+    <div class="em-title">Unlock Your Free Styling</div>
+    <div class="em-sub">Enter your email to unlock <strong style="color:var(--pink2)">10 free AI outfit generations</strong> per day. No credit card. No spam.</div>
     <input type="email" class="em-input" id="em-email" placeholder="your@email.com" onkeydown="if(event.key==='Enter')submitEmail()"/>
     <input type="text" class="em-input" id="em-name" placeholder="Your name (optional)"/>
-    <button class="em-btn" onclick="submitEmail()">Unlock Free Access</button>
-    <div class="em-skip" onclick="skipEmail()">Skip for now (3 free tries)</div>
+    <button class="em-btn" onclick="submitEmail()">✨ Unlock Free Access</button>
+    <div class="em-skip" onclick="skipEmail()">Skip — get only 3 free tries</div>
     <div class="em-badges">
       <span class="em-badge">No spam</span>
       <span class="em-badge">Unsubscribe anytime</span>
@@ -257,62 +595,55 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
   </div>
 </div>
 
-<!-- UPGRADE MODAL -->
+<!-- ── UPGRADE MODAL ── -->
 <div class="overlay hidden" id="upgrade-overlay">
   <div class="up-box">
     <span class="up-crown">👑</span>
-    <div class="up-title">Upgrade to StyleAI Pro</div>
-    <div class="up-sub">You've used your free generations. Upgrade for unlimited AI styling!</div>
+    <div class="up-title">Go Pro. Look Better.</div>
+    <div class="up-sub">You've hit your daily limit. Upgrade for unlimited styling — all day, every day.</div>
     <ul class="up-features">
       <li>Unlimited AI outfit generations daily</li>
-      <li>More detailed personalised suggestions</li>
-      <li>Priority faster AI responses</li>
-      <li>Exclusive trend reports</li>
-      <li>Save and share your outfits</li>
+      <li>More detailed & personalised suggestions</li>
+      <li>Faster AI priority responses</li>
+      <li>Exclusive trend reports for India</li>
     </ul>
-    <div class="up-price">&#8377;199<span style="font-size:16px;font-weight:400;color:var(--muted)">/month</span></div>
+    <div class="up-price" style="background:linear-gradient(135deg,var(--pink2),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">₹199<span style="font-size:20px;font-weight:400;-webkit-text-fill-color:var(--muted)">/mo</span></div>
     <div class="up-period">Cancel anytime. No hidden fees.</div>
-    <button class="up-btn" onclick="upgradeClick()">Upgrade to Pro — Pay Rs.199</button>
+    <button class="up-btn" onclick="upgradeClick()">Upgrade to Pro — Pay ₹199</button>
     <div class="up-close" onclick="closeUpgrade()">Maybe later</div>
   </div>
 </div>
 
-<!-- ADMIN MODAL -->
+<!-- ── ADMIN MODAL ── -->
 <div class="overlay hidden" id="admin-overlay">
   <div class="admin-modal">
     <div class="admin-head">
       <div>
         <div class="admin-title">Admin Panel</div>
-        <div style="font-size:12px;color:var(--muted);margin-top:3px;">StyleAI Dashboard</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:2px;font-family:'Space Mono',monospace;">StyleAI Dashboard</div>
       </div>
-      <button class="admin-close" onclick="closeAdmin()">X</button>
+      <button class="admin-close" onclick="closeAdmin()">✕</button>
     </div>
     <div class="admin-stats">
       <div class="adm-stat"><div class="adm-stat-n" id="adm-pro-count">0</div><div class="adm-stat-l">Pro Users</div></div>
-      <div class="adm-stat"><div class="adm-stat-n" style="color:var(--gold);" id="adm-revenue">Rs.0</div><div class="adm-stat-l">Revenue</div></div>
+      <div class="adm-stat"><div class="adm-stat-n" style="color:var(--gold);" id="adm-revenue">₹0</div><div class="adm-stat-l">Revenue</div></div>
       <div class="adm-stat"><div class="adm-stat-n" style="color:var(--green);" id="adm-total-gen">0</div><div class="adm-stat-l">Total Gens</div></div>
     </div>
     <div class="adm-sec">
-      <div class="adm-sec-title">Activate Pro for User (after payment)</div>
-      <div class="adm-row">
-        <input type="email" class="adm-input" id="adm-email-input" placeholder="User email address"/>
-        <button class="adm-btn" onclick="admActivatePro()">Activate Pro</button>
-      </div>
+      <div class="adm-sec-title">Activate Pro for User</div>
+      <div class="adm-row"><input type="email" class="adm-input" id="adm-email-input" placeholder="User email address"/><button class="adm-btn" onclick="admActivatePro()">Activate</button></div>
     </div>
     <div class="adm-sec">
       <div class="adm-sec-title">Revoke Pro Access</div>
-      <div class="adm-row">
-        <input type="email" class="adm-input" id="adm-revoke-input" placeholder="User email address"/>
-        <button class="adm-btn-r" onclick="admRevokePro()">Revoke</button>
-      </div>
+      <div class="adm-row"><input type="email" class="adm-input" id="adm-revoke-input" placeholder="User email address"/><button class="adm-btn-r" onclick="admRevokePro()">Revoke</button></div>
     </div>
     <div class="adm-sec">
-      <div class="adm-sec-title">My Device Settings</div>
+      <div class="adm-sec-title">My Device</div>
       <div class="adm-device-btns">
-        <button class="adm-btn-b" onclick="admResetLimit()">Reset My Limit</button>
+        <button class="adm-btn-b" onclick="admResetLimit()">Reset Limit</button>
         <button class="adm-btn-g" onclick="admActivateProHere()">Activate Pro Here</button>
         <button class="adm-btn-r" onclick="admDeactivatePro()">Deactivate Pro</button>
-        <button style="padding:8px 14px;background:rgba(255,255,255,0.04);color:var(--muted2);border:0.5px solid rgba(255,255,255,0.1);border-radius:8px;font-size:12.5px;font-family:inherit;cursor:pointer;" onclick="admResetEmail()">Reset Email</button>
+        <button style="padding:8px 14px;background:rgba(255,255,255,0.04);color:var(--muted2);border:1px solid var(--border);border-radius:8px;font-size:12.5px;font-family:'DM Sans',sans-serif;cursor:pointer;" onclick="admResetEmail()">Reset Email</button>
       </div>
     </div>
     <div class="adm-sec">
@@ -322,49 +653,55 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
   </div>
 </div>
 
-<!-- TOAST -->
+<!-- ── TOAST ── -->
 <div id="toast">Done!</div>
 
-<!-- USAGE BAR -->
+<!-- ── USAGE BAR ── -->
 <div id="usage-bar">
   <div class="ub-inner">
-    <span class="ub-label"><em id="plan-label">Free Plan:</em> <strong id="ub-used">0</strong> / <strong id="ub-limit">10</strong> generations used today</span>
+    <span class="ub-label"><em id="plan-label">FREE</em> &nbsp;<strong id="ub-used">0</strong>/<strong id="ub-limit">10</strong></span>
     <div class="ub-track"><div class="ub-fill" id="ub-fill" style="width:0%"></div></div>
-    <button class="ub-upgrade" onclick="showUpgrade()">Go Pro</button>
+    <button class="ub-upgrade" onclick="showUpgrade()">Go Pro ✦</button>
   </div>
 </div>
 
-<!-- HERO -->
+<!-- ── HERO ── -->
 <div class="hero">
-  <div class="hero-chip"><div class="hero-dot"></div> AI-Powered Fashion for India</div>
-  <h1>StyleAI</h1>
-  <p>Your personal AI fashion stylist. Tell us everything about your style — get 3 complete personalised outfits with photos and direct shopping links.</p>
-  <div class="hero-stats">
-    <div class="hs"><div class="hs-n">10</div><div class="hs-l">Free/Day</div></div>
-    <div class="hs"><div class="hs-n">Amazon</div><div class="hs-l">and Flipkart</div></div>
-    <div class="hs"><div class="hs-n">Budget</div><div class="hs-l">Strict</div></div>
-    <div class="hs"><div class="hs-n">Pro Rs.199</div><div class="hs-l">Unlimited</div></div>
+  <div class="hero-tag"><div class="hero-dot"></div>AI-Powered Fashion for India</div>
+  <div class="hero-logo">STYLE</div>
+  <div class="hero-sub">Tell us your style, occasion & budget — get 3 complete personalised outfits with Amazon & Flipkart links in seconds.</div>
+  <div class="hero-stripe">
+    <div class="hs"><div class="hs-n">10</div><div class="hs-l">Free / Day</div></div>
+    <div class="hs"><div class="hs-n">70B</div><div class="hs-l">AI Model</div></div>
+    <div class="hs"><div class="hs-n">Amazon</div><div class="hs-l">+ Flipkart</div></div>
+    <div class="hs"><div class="hs-n">₹199</div><div class="hs-l">Pro / Month</div></div>
   </div>
 </div>
 
 <div class="main">
+  <button id="pwa-install-btn">📱 Install App</button>
 
-  <!-- FEATURES -->
+  <!-- ── HISTORY TOGGLE ── -->
+  <button class="hist-btn" onclick="toggleHistory()" id="hist-toggle-btn">
+    📋 My Outfit History &nbsp;<span style="background:rgba(255,45,120,0.15);border:1px solid rgba(255,45,120,0.25);border-radius:20px;padding:2px 9px;font-size:11px;color:var(--pink2);" id="hist-count">0</span>
+  </button>
+  <div id="hist-section" class="hist-section" style="display:none;"></div>
+
+  <!-- ── FEATURES ── -->
   <div class="feat-strip">
-    <div class="feat-item"><div class="feat-ico">🎯</div><div><div class="feat-t">Budget Strict</div><div class="feat-d">AI never exceeds your set budget</div></div></div>
-    <div class="feat-item"><div class="feat-ico">🛒</div><div><div class="feat-t">Direct Shopping</div><div class="feat-d">Amazon and Flipkart links per item</div></div></div>
-    <div class="feat-item"><div class="feat-ico">✨</div><div><div class="feat-t">Personalised</div><div class="feat-d">8 inputs for perfect style match</div></div></div>
+    <div class="feat-item"><div class="feat-ico">🎯</div><div class="feat-t">Budget Strict</div><div class="feat-d">AI never exceeds your set budget</div></div>
+    <div class="feat-item"><div class="feat-ico">🛒</div><div class="feat-t">Direct Shopping</div><div class="feat-d">Amazon + Flipkart links per item</div></div>
+    <div class="feat-item"><div class="feat-ico">✨</div><div class="feat-t">Personalised</div><div class="feat-d">8 inputs for your perfect look</div></div>
   </div>
 
-  <!-- GENERATE FORM -->
+  <!-- ── GENERATE FORM ── -->
   <div class="form-card">
     <div class="form-card-title">👗 Generate Your Outfit</div>
     <div class="form-card-sub">Fill in your details for the most accurate AI outfit suggestions</div>
 
-    <!-- Row 1: Budget + Gender -->
     <div class="fg-grid">
       <div class="fg" id="fg-budget">
-        <label>Budget (Rs.) *</label>
+        <label>Budget (₹) *</label>
         <input type="number" id="budget" placeholder="e.g. 2500" min="200"/>
         <div class="fg-error-msg">Please enter your budget</div>
       </div>
@@ -379,7 +716,6 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
       </div>
     </div>
 
-    <!-- Row 2: Occasion + Style -->
     <div class="fg-grid">
       <div class="fg" id="fg-occasion">
         <label>Occasion *</label>
@@ -414,7 +750,6 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
       </div>
     </div>
 
-    <!-- Row 3: Weather + Body Type -->
     <div class="fg-grid">
       <div class="fg">
         <label>Weather</label>
@@ -440,7 +775,6 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
       </div>
     </div>
 
-    <!-- Row 4: Sizes -->
     <div class="fg-grid three">
       <div class="fg">
         <label>Top Size</label>
@@ -471,56 +805,150 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
       <div class="form-divider-line"></div>
     </div>
 
-    <!-- Color Preference -->
     <div class="fg" style="margin-bottom:14px;">
       <label>Colour Preference (optional)</label>
       <input type="text" id="color-pref" placeholder="e.g. black and white, earthy tones, pastels, no red..."/>
     </div>
-
-    <!-- Preferred Brands -->
     <div class="fg" style="margin-bottom:14px;">
       <label>Preferred Brands (optional)</label>
       <input type="text" id="brands-pref" placeholder="e.g. Nike, Zara, H&M, Roadster, FabIndia..."/>
     </div>
-
-    <!-- Extra Details -->
-    <div class="fg" style="margin-bottom:18px;">
+    <div class="fg" style="margin-bottom:20px;">
       <label>Any Other Details (optional)</label>
-      <textarea id="extra" placeholder="e.g. I prefer loose fit, avoid synthetic fabric, tall body type, going to a beach wedding in Goa in June..."></textarea>
+      <textarea id="extra" rows="3" placeholder="e.g. I prefer loose fit, avoid synthetic fabric, going to a beach wedding in Goa in June..."></textarea>
     </div>
 
     <button class="gen-btn" id="gen-btn" onclick="go()">✨ Generate My Outfits</button>
     <div class="free-note" id="free-note">You have <em id="free-left">10</em> free generations remaining today</div>
   </div>
 
-  <!-- LOADING -->
+  <!-- ── LOADING ── -->
   <div class="loading-wrap" id="loading-wrap">
-    <div class="big-spinner"></div>
-    <div class="loading-text">Your AI stylist is creating your perfect looks...</div>
+    <div class="load-ring"></div>
+    <div class="loading-text">Styling Your Look...</div>
     <div class="loading-tips" id="ltips">
       <div class="ltip" style="animation-delay:0.8s">Analysing your style preferences...</div>
-      <div class="ltip" style="animation-delay:2s">Matching items to your Rs.<span id="ltip-budget">0</span> budget...</div>
-      <div class="ltip" style="animation-delay:3.5s">Choosing colours and fits for your body type...</div>
-      <div class="ltip" style="animation-delay:5s">Finding the best brands available in India...</div>
+      <div class="ltip" style="animation-delay:2s">Matching items to ₹<span id="ltip-budget">0</span> budget...</div>
+      <div class="ltip" style="animation-delay:3.5s">Choosing colours for your body type...</div>
+      <div class="ltip" style="animation-delay:5s">Finding brands available in India...</div>
     </div>
   </div>
 
   <div id="results"></div>
-
 </div>
 
 <div class="site-footer">
   <p><em>StyleAI</em> — Your personal AI fashion stylist<br/>
-  Free: 10 generations/day &nbsp;·&nbsp; Pro: Unlimited for <em>Rs.199/month</em><br/>
-  Tap the usage bar 5 times to open Admin Panel</p>
+  Free: 10 generations/day &nbsp;·&nbsp; Pro: Unlimited for <em>₹199/month</em><br/>
+  <span style="color:var(--muted);font-size:11px;">Tap usage bar 5× to open Admin Panel</span></p>
 </div>
 
 <script>
 var KEY   = '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';
-var MODEL = 'llama-3.1-8b-instant';
+var MODEL = 'llama-3.3-70b-versatile';
 var SHEET = 'https://script.google.com/macros/s/AKfycbzHxu2y5RdWbcrgXETrCU45SRfKB9ee2JudPNPh5MldpyamEbAvf0GUUshn7DiyLH79sg/exec';
 var FREE_LIMIT = 10;
 var toastTimer, lastGenData = null;
+
+// ── HISTORY ──
+var HIST_KEY = 'styleai_history';
+var HIST_MAX = 50;
+
+function getHistory(){return JSON.parse(localStorage.getItem(HIST_KEY)||'[]');}
+function saveHistory(arr){localStorage.setItem(HIST_KEY,JSON.stringify(arr));}
+
+function saveToHistory(outfits, params){
+  var hist = getHistory();
+  hist.unshift({
+    id: Date.now(),
+    date: new Date().toLocaleString('en-IN'),
+    gender: params.gender,
+    occasion: params.occasion,
+    style: params.style,
+    budget: params.budgetNum,
+    outfits: outfits
+  });
+  if(hist.length > HIST_MAX) hist = hist.slice(0, HIST_MAX);
+  saveHistory(hist);
+  updateHistCount();
+}
+
+function updateHistCount(){
+  var c = getHistory().length;
+  var el = document.getElementById('hist-count');
+  if(el) el.textContent = c;
+}
+
+function toggleHistory(){
+  var sec = document.getElementById('hist-section');
+  var btn = document.getElementById('hist-toggle-btn');
+  if(!sec) return;
+  if(sec.style.display === 'none'){
+    sec.style.display = 'block';
+    renderHistory();
+    btn.innerHTML = '📋 Hide History';
+  } else {
+    sec.style.display = 'none';
+    var c = getHistory().length;
+    btn.innerHTML = '📋 My Outfit History &nbsp;<span style="background:rgba(255,45,120,0.15);border:1px solid rgba(255,45,120,0.25);border-radius:20px;padding:2px 9px;font-size:11px;color:var(--pink2);" id="hist-count">'+c+'</span>';
+  }
+}
+
+function renderHistory(){
+  var sec = document.getElementById('hist-section');
+  var hist = getHistory();
+  if(!hist.length){
+    sec.innerHTML = '<div class="hist-empty">No outfit history yet. Generate some outfits to see them here!</div>';
+    return;
+  }
+  var html = '<div class="hist-title">Your Last '+hist.length+' Outfits</div><div class="hist-list">';
+  hist.forEach(function(h, i){
+    var names = (h.outfits||[]).map(function(o){return o.name||'Outfit';}).join(', ');
+    html += '<div class="hist-item">'
+      + '<div class="hist-item-left" onclick="loadHistoryItem('+i+')">'
+      + '<div class="hist-item-date">'+h.date+'</div>'
+      + '<div class="hist-item-label">'+h.gender+' · '+h.occasion+(h.style?' · '+h.style:'')+'</div>'
+      + '<div class="hist-item-sub">Budget ₹'+Number(h.budget||0).toLocaleString('en-IN')+' — '+names+'</div>'
+      + '</div>'
+      + '<button class="hist-item-del" onclick="deleteHistoryItem('+i+',event)">✕</button>'
+      + '</div>';
+  });
+  html += '</div>';
+  if(hist.length >= 5){
+    html += '<button onclick="clearAllHistory()" style="margin-top:10px;background:rgba(255,71,87,0.06);border:1px solid rgba(255,71,87,0.15);border-radius:8px;color:#ff6b7a;font-size:12px;padding:8px 14px;cursor:pointer;font-family:\'DM Sans\',sans-serif;width:100%;">Clear All History</button>';
+  }
+  sec.innerHTML = html;
+}
+
+function loadHistoryItem(i){
+  var h = getHistory()[i];
+  if(!h) return;
+  document.getElementById('hist-section').style.display = 'none';
+  var c = getHistory().length;
+  document.getElementById('hist-toggle-btn').innerHTML = '📋 My Outfit History &nbsp;<span style="background:rgba(255,45,120,0.15);border:1px solid rgba(255,45,120,0.25);border-radius:20px;padding:2px 9px;font-size:11px;color:var(--pink2);" id="hist-count">'+c+'</span>';
+  document.getElementById('results').innerHTML = '';
+  renderOutfits(h.outfits, h.gender, h.occasion, h.style, h.budget);
+  document.getElementById('results').scrollIntoView({behavior:'smooth'});
+  showToast('Loaded outfit from '+h.date);
+}
+
+function deleteHistoryItem(i, e){
+  e.stopPropagation();
+  var hist = getHistory();
+  hist.splice(i, 1);
+  saveHistory(hist);
+  updateHistCount();
+  renderHistory();
+}
+
+function clearAllHistory(){
+  if(confirm('Clear all '+getHistory().length+' saved outfits?')){
+    localStorage.removeItem(HIST_KEY);
+    updateHistCount();
+    renderHistory();
+    showToast('History cleared!');
+  }
+}
 
 // ── USAGE ──
 function getUsage(){var d=JSON.parse(localStorage.getItem('styleai_usage')||'{}'),t=new Date().toDateString();return d.date!==t?{date:t,count:0}:d;}
@@ -531,8 +959,8 @@ function isPro(){return localStorage.getItem('styleai_pro')==='1';}
 
 function updateBar(){
   if(isPro()){
-    document.getElementById('plan-label').textContent='Pro Plan:';
-    document.getElementById('ub-limit').textContent='Unlimited';
+    document.getElementById('plan-label').textContent='PRO ✦';
+    document.getElementById('ub-limit').textContent='∞';
     document.getElementById('ub-fill').style.width='100%';
     document.getElementById('ub-fill').className='ub-fill';
     document.getElementById('ub-used').textContent=getCount();
@@ -549,7 +977,7 @@ function updateBar(){
   var fl=document.getElementById('free-left');if(fl)fl.textContent=left;
   if(c>=lim){
     var fn=document.getElementById('free-note');
-    if(fn)fn.innerHTML='<span style="color:var(--red)">Daily limit reached.</span> <span style="color:var(--accent2);cursor:pointer;" onclick="showUpgrade()">Upgrade to Pro</span>';
+    if(fn)fn.innerHTML='<span style="color:var(--red)">Daily limit reached.</span> <span style="color:var(--pink2);cursor:pointer;" onclick="showUpgrade()">Upgrade to Pro →</span>';
     disableBtn(true);
   }
 }
@@ -606,7 +1034,7 @@ function upgradeClick(){
     body:JSON.stringify({type:'payment_attempt',email:email,amount:199,plan:'StyleAI Pro',time:new Date().toLocaleString()})
   }).catch(function(){});
   window.location.href='upi://pay?pa=aliarsad@fam&pn=StyleAI%20Pro&am=199&cu=INR&tn=StyleAI%20Pro%20Plan';
-  setTimeout(function(){showToast('Pay Rs.199 to aliarsad@fam — then contact us to activate Pro!');},1500);
+  setTimeout(function(){showToast('Pay ₹199 to aliarsad@fam — then contact us to activate Pro!');},1500);
   closeUpgrade();
 }
 
@@ -668,60 +1096,82 @@ async function go(){
   var budgetNum=parseInt(budget);
   var maxPerItem=Math.floor(budgetNum/3);
 
-  // Gender-specific clothing rules
   var genderRule = '';
-  var genderWord = gender === 'Male' ? 'men' : gender === 'Female' ? 'women' : 'unisex';
   if(gender==='Male'){
-    genderRule = 'GENDER = MALE. This is CRITICAL. You MUST ONLY suggest MEN clothing items. '
-      + 'ALLOWED for men: mens tshirt, mens shirt, mens polo, mens kurta, mens jeans, mens chinos, mens trousers, mens shorts, mens joggers, mens cargo pants, mens sneakers, mens loafers, mens formal shoes, mens sandals, mens watch, mens belt, mens cap, mens sunglasses, mens jacket, mens hoodie, mens blazer. '
-      + 'ABSOLUTELY FORBIDDEN: dress, skirt, blouse, saree, lehenga, salwar, kurti, palazzo, crop top, womens kurta, heels, womens sandals, womens bag, earrings, bangles, necklace, womens anything. '
-      + 'Every item name MUST start with or include "Men" or "Mens". Every amazon_search and flipkart_search MUST contain the word "men".';
+    genderRule = 'GENDER = MALE. This is CRITICAL. You MUST ONLY suggest MEN clothing items. ALLOWED for men: mens tshirt, mens shirt, mens polo, mens kurta, mens jeans, mens chinos, mens trousers, mens shorts, mens joggers, mens cargo pants, mens sneakers, mens loafers, mens formal shoes, mens sandals, mens watch, mens belt, mens cap, mens sunglasses, mens jacket, mens hoodie, mens blazer. ABSOLUTELY FORBIDDEN: dress, skirt, blouse, saree, lehenga, salwar, kurti, palazzo, crop top, womens kurta, heels, womens sandals, womens bag, earrings, bangles, necklace, womens anything. Every item name MUST start with or include "Men" or "Mens". Every amazon_search and flipkart_search MUST contain the word "men".';
   } else if(gender==='Female'){
-    genderRule = 'GENDER = FEMALE. This is CRITICAL. You MUST ONLY suggest WOMEN clothing items. '
-      + 'ALLOWED for women: womens top, blouse, kurti, kurta for women, womens tshirt, dress, skirt, palazzo, leggings, womens jeans, womens trousers, womens shorts, salwar, saree, lehenga, womens shoes, heels, flats, womens sneakers, womens bag, womens jewellery, womens watch, dupatta. '
-      + 'ABSOLUTELY FORBIDDEN: mens shirt, mens tshirt, mens trousers, mens jeans, mens kurta, mens shoes, mens anything. '
-      + 'Every item name MUST include "Women" or "Womens". Every amazon_search and flipkart_search MUST contain the word "women".';
+    genderRule = 'GENDER = FEMALE. This is CRITICAL. You MUST ONLY suggest WOMEN clothing items. ALLOWED for women: womens top, blouse, kurti, kurta for women, womens tshirt, dress, skirt, palazzo, leggings, womens jeans, womens trousers, womens shorts, salwar, saree, lehenga, womens shoes, heels, flats, womens sneakers, womens bag, womens jewellery, womens watch, dupatta. ABSOLUTELY FORBIDDEN: mens shirt, mens tshirt, mens trousers, mens jeans, mens kurta, mens shoes, mens anything. Every item name MUST include "Women" or "Womens". Every amazon_search and flipkart_search MUST contain the word "women".';
   } else {
     genderRule = 'GENDER = UNISEX. Suggest gender-neutral clothing that works for anyone: oversized tshirts, joggers, hoodies, sneakers, caps.';
   }
 
-  var prompt = 'You are an Indian fashion stylist. '+genderRule+' Now create 3 outfit ideas. Every single item MUST be for '+gender+' only. User: Budget Rs.'+budget+' per outfit, Occasion='+occasion+', Style='+(style||'any')+', Weather='+(weather||'mild')+', Colors='+(colorPref||'any')+', BodyType='+(bodytype||'any')+', TopSize='+(topSz||'any')+', BottomSize='+(botSz||'any')+', ShoeSize='+(shoeSz||'any')+', Brands='+(brands||'any')+', Notes='+(extra||'none')+'. Each item price approx Rs.'+maxPerItem+'. Always include '+gender.toLowerCase()+' in amazon_search and flipkart_search. Reply ONLY valid JSON: {"outfits":[{"name":"x","description":"x","vibe_tags":["x"],"match_score":90,"style_tip":"x","items":[{"category":"Top","name":"x","brand":"x","price":0,"why":"x","amazon_search":"x","flipkart_search":"x","google_image_search":"x"},{"category":"Bottom","name":"x","brand":"x","price":0,"why":"x","amazon_search":"x","flipkart_search":"x","google_image_search":"x"},{"category":"Shoes","name":"x","brand":"x","price":0,"why":"x","amazon_search":"x","flipkart_search":"x","google_image_search":"x"},{"category":"Accessory","name":"x","brand":"x","price":0,"why":"x","amazon_search":"x","flipkart_search":"x","google_image_search":"x"}]}]}';
+  // Build system prompt
+  var sysPrompt = 'You are a JSON-only Indian fashion stylist API. You have encyclopedic knowledge of products sold on Amazon.in and Flipkart.\n\n'
+    + '=== GENDER RULE ===\n' + genderRule + '\n\n'
+    + '=== ITEM NAME RULE — THIS IS THE MOST CRITICAL RULE ===\n'
+    + 'Every single "name" field MUST read like a real product title on Amazon/Flipkart. It must contain: Brand + Gender + Specific product type + Color + Material or Fit details.\n\n'
+    + 'STRICTLY FORBIDDEN generic names (if you use any of these you have FAILED):\n'
+    + '"Men Watch", "Casual Shoes", "Women Kurti", "Black T-Shirt", "Denim Jeans", "Sneakers", "Handbag", "Sunglasses", "Formal Shoes", "Ethnic Wear", "Joggers", "Hoodie", "Kurta", "Belt"\n\n'
+    + 'CORRECT specific names (use this level of detail for every single item):\n'
+    + '"Fastrack Analog Quartz Mens Wristwatch Brown Leather Strap 38mm Dial"\n'
+    + '"Roadster Men Slim Fit Mid-Rise Stretch Dark Blue Jeans"\n'
+    + '"Nike Air Max 270 Mens White Black Mesh Running Shoes"\n'
+    + '"Libas Women Anarkali Flared Kurta Olive Green Rayon with Dupatta"\n'
+    + '"Levi\'s 511 Men Slim Fit Blue Stretch Denim Jeans"\n'
+    + '"Allen Solly Men Regular Fit Pastel Blue Cotton Formal Shirt"\n'
+    + '"Mochi Women Block Heel Tan Leather Sandals with Ankle Strap"\n'
+    + '"HRX by Hrithik Roshan Men Rapid-Dry Navy Blue Sports Shorts"\n\n'
+    + '=== AMAZON/FLIPKART SEARCH RULE ===\n'
+    + 'amazon_search and flipkart_search must be a specific searchable query: brand + gender + color + product type.\n'
+    + 'BAD: "mens watch", "casual shoes for men"\n'
+    + 'GOOD: "Fastrack analog mens brown leather strap watch", "Nike Air Max 270 mens white running shoes"\n\n'
+    + '=== BRANDS — use only real Indian market brands ===\n'
+    + 'Clothing: Roadster, HRX, Mast & Harbour, Jack & Jones, U.S. Polo Assn, Peter England, Van Heusen, Allen Solly, Blackberrys, W, Biba, Libas, FabIndia, Aurelia, Manyavar, Mohey, Biba, Global Desi, SASSAFRAS, ONLY, Vero Moda, Chemistry\n'
+    + 'Footwear: Nike, Adidas, Puma, Reebok, New Balance, Woodland, Red Tape, Metro Shoes, Catwalk, Mochi, Bata, Liberty\n'
+    + 'Accessories: Fastrack, Titan, Casio, Wildcraft, Baggit, Lavie, Caprese, Tommy Hilfiger (belt/wallet)\n'
+    + 'Denim: Levi\'s, Wrangler, Pepe Jeans, Lee, Spykar, Flying Machine\n\n'
+    + '=== PRICE ===\n'
+    + 'Realistic India 2024 pricing. Each item approx Rs.' + maxPerItem + '. Total outfit must stay within Rs.' + budgetNum + '.\n\n'
+    + 'OUTPUT: Valid JSON only. No markdown. No extra text.';
+
+  // Build user prompt
+  var userPrompt = 'Generate 3 complete outfits. EVERY item name must be specific like a real Amazon product title — include brand, gender, color, fit, material.\n\n'
+    + 'Person details:\n'
+    + '- Gender: ' + gender + '\n'
+    + '- Occasion: ' + occasion + '\n'
+    + '- Style: ' + (style||'Casual') + '\n'
+    + '- Weather: ' + (weather||'Mild') + '\n'
+    + '- Total budget per outfit: Rs.' + budget + '\n'
+    + '- Body type: ' + (bodytype||'Average') + '\n'
+    + '- Top size: ' + (topSz||'M') + ', Bottom size: ' + (botSz||'32') + ', Shoe size: ' + (shoeSz||'8') + '\n'
+    + '- Color preference: ' + (colorPref||'no strong preference') + '\n'
+    + '- Preferred brands: ' + (brands||'any of the listed brands') + '\n'
+    + '- Extra notes: ' + (extra||'none') + '\n\n'
+    + 'REMINDER: Names like "Men Watch" or "Casual Shoes" are WRONG. Names like "Fastrack Quartz Analog Mens Watch Black Dial Leather Strap" are CORRECT.\n\n'
+    + 'Reply ONLY with this JSON (no markdown, no extra text):\n'
+    + '{"outfits":[{"name":"Outfit Name","description":"2 sentence description","vibe_tags":["tag1","tag2","tag3"],"match_score":92,"style_tip":"specific actionable styling tip","items":[{"category":"Top","name":"BRAND + GENDER + TYPE + COLOR + FIT/MATERIAL","brand":"BrandName","price":0,"why":"why this item works for the occasion and body type","amazon_search":"brand gender color specific product type","flipkart_search":"brand gender color specific product type","google_image_search":"brand product name color"},{"category":"Bottom","name":"SPECIFIC NAME","brand":"x","price":0,"why":"x","amazon_search":"x","flipkart_search":"x","google_image_search":"x"},{"category":"Shoes","name":"SPECIFIC NAME","brand":"x","price":0,"why":"x","amazon_search":"x","flipkart_search":"x","google_image_search":"x"},{"category":"Accessory","name":"SPECIFIC NAME","brand":"x","price":0,"why":"x","amazon_search":"x","flipkart_search":"x","google_image_search":"x"}]}]}';
 
   try{
     var res=await fetch('https://api.groq.com/openai/v1/chat/completions',{
       method:'POST',
       headers:{'Content-Type':'application/json','Authorization':'Bearer '+KEY},
-      body:JSON.stringify({model:MODEL,max_tokens:2500,temperature:0.3,messages:[{role:"system",content:"You are a JSON-only Indian fashion stylist API. MOST IMPORTANT RULE: You MUST strictly follow the gender. If gender is Male: suggest ONLY mens items — mens tshirt, mens shirt, mens jeans, mens trousers, mens shorts, mens kurta for men, mens sneakers, mens shoes, mens watch, mens belt, mens cap, mens jacket, mens hoodie. NEVER suggest any womens item like dress, skirt, blouse, saree, kurti for women, heels, bangles, or anything feminine. If gender is Female: suggest ONLY womens items. Never mix genders under any circumstances. Always respond with valid JSON only. No text, no markdown."},{role:"user",content:prompt}]})
+      body:JSON.stringify({model:MODEL,max_tokens:2800,temperature:0.4,messages:[{role:"system",content:sysPrompt},{role:"user",content:userPrompt}]})
     });
     if(!res.ok){var ed=await res.json();throw new Error(ed.error?ed.error.message:'API error '+res.status);}
     var data=await res.json();
     var raw=data.choices[0].message.content||'';
-    // Step 1: Clean markdown fences
     var cleaned = raw.replace(/```json\s*/gi,'').replace(/```\s*/g,'').trim();
-    // Step 2: Extract JSON block
     var startIdx = cleaned.indexOf('{');
     var endIdx = cleaned.lastIndexOf('}');
     if(startIdx===-1||endIdx===-1) throw new Error('AI returned invalid format. Please try again.');
     cleaned = cleaned.substring(startIdx, endIdx+1);
-    // Step 3: Fix common JSON issues
-    cleaned = cleaned
-      .replace(/,\s*}/g,'}')        // trailing commas in objects
-      .replace(/,\s*]/g,']')         // trailing commas in arrays
-      .replace(/[\u0000-\u001F]+/g,' ') // control characters
-      .replace(/\\'/g,"'");            // escaped single quotes
+    cleaned = cleaned.replace(/,\s*}/g,'}').replace(/,\s*]/g,']').replace(/[\u0000-\u001F]+/g,' ').replace(/\\'/g,"'");
     var parsed;
-    try {
-      parsed = JSON.parse(cleaned);
-    } catch(jsonErr) {
-      // Try progressive truncation to find last valid outfit
-      var attempts = [
-        cleaned.replace(/,\s*\{[^{}]*$/, ']}]}'),
-        cleaned.replace(/\{[^{}]*$/, ']}]}'),
-      ];
+    try { parsed = JSON.parse(cleaned); }
+    catch(jsonErr) {
+      var attempts = [cleaned.replace(/,\s*\{[^{}]*$/, ']}]}'),cleaned.replace(/\{[^{}]*$/, ']}]}')];
       var fixed = false;
-      for(var a=0;a<attempts.length;a++){
-        try{ parsed=JSON.parse(attempts[a]); fixed=true; break; }catch(e){}
-      }
+      for(var a=0;a<attempts.length;a++){try{parsed=JSON.parse(attempts[a]);fixed=true;break;}catch(e){}}
       if(!fixed) throw new Error('AI response was invalid. Please try again in a moment.');
     }
     if(!parsed.outfits||!parsed.outfits.length)throw new Error('No outfits generated. Please try again.');
@@ -730,32 +1180,28 @@ async function go(){
     bumpCount();
     checkGenderMismatch(parsed.outfits, gender);
     renderOutfits(parsed.outfits,gender,occasion,style,budgetNum);
+    saveToHistory(parsed.outfits, {gender:gender,occasion:occasion,style:style,budgetNum:budgetNum});
     fetch(SHEET,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({type:'generation',email:localStorage.getItem('styleai_email')||'anonymous',budget:budget,gender:gender,occasion:occasion,style:style,weather:weather,time:new Date().toLocaleString()})
     }).catch(function(){});
   }catch(e){
     document.getElementById('loading-wrap').classList.remove('show');
-    document.getElementById('results').innerHTML='<div class="error-box">Something went wrong: '+e.message+'<br><br>Please wait a moment and try again.</div>';
+    document.getElementById('results').innerHTML='<div class="error-box">⚠️ '+e.message+'<br><br>Please wait a moment and try again.</div>';
   }
   btn.disabled=false; btn.textContent='✨ Generate My Outfits';
   updateBar();
 }
 
 // ── REGENERATE ──
-function regenerate(){
-  document.getElementById('results').innerHTML='';
-  go();
-}
+function regenerate(){document.getElementById('results').innerHTML='';go();}
 
 // ── RENDER ──
 function filterGenderItems(items, gender){
-  // Post-process: remove any items that clearly don't match gender
   var maleForbidden = ['dress','skirt','blouse','saree','lehenga','salwar','kurti','palazzo','crop top','heels','womens','women'];
   var femaleForbidden = ['mens shirt','mens tshirt','mens trouser','mens jeans','mens kurta','mens shoe','mens formal','mens polo'];
   return items.map(function(item){
     var nameLower = (item.name||'').toLowerCase();
     if(gender==='Male'){
-      // Fix name if it contains female terms
       var isFemale = maleForbidden.some(function(f){return nameLower.includes(f);});
       if(isFemale){
         item.name = 'Mens ' + item.name.replace(/women'?s?/gi,'').replace(/ladies/gi,'').trim();
@@ -777,42 +1223,35 @@ function filterGenderItems(items, gender){
 
 function checkGenderMismatch(outfits, gender){
   if(gender !== 'Male') return;
-  var femaleWords = ['dress','skirt','blouse','saree','lehenga','salwar','kurti','heels','palazzo','dupatta','crop top','bangles','lehenga'];
+  var femaleWords = ['dress','skirt','blouse','saree','lehenga','salwar','kurti','heels','palazzo','dupatta','crop top','bangles'];
   var warned = false;
   outfits.forEach(function(o){
     o.items.forEach(function(item){
       if(!warned){
         var name = (item.name||'').toLowerCase();
         femaleWords.forEach(function(w){
-          if(name.includes(w) && !warned){
-            warned = true;
-            showToast('Gender mismatch detected — regenerating...');
-            setTimeout(function(){ regenerate(); }, 1000);
-          }
+          if(name.includes(w) && !warned){warned=true;showToast('Gender mismatch detected — regenerating...');setTimeout(function(){regenerate();},1000);}
         });
       }
     });
   });
 }
+
 function renderOutfits(outfits,gender,occasion,style,budgetNum){
   var c=document.getElementById('results');
   var userName=localStorage.getItem('styleai_name')||'';
-  c.innerHTML='<div class="result-lbl">'+outfits.length+' outfits styled'+(userName?' for '+userName:' for you')+'</div>';
+  c.innerHTML='<div class="result-lbl">'+outfits.length+' Outfits Styled'+(userName?' for '+userName:'')+' ✦</div>';
 
   outfits.forEach(function(o,i){
-    // JS budget enforcement
     var rawTotal=o.items.reduce(function(s,item){return s+(parseInt(item.price)||0);},0);
     if(budgetNum>0&&rawTotal>budgetNum){
       var ratio=(budgetNum*0.95)/rawTotal;
       o.items=o.items.map(function(item){return Object.assign({},item,{price:Math.floor((parseInt(item.price)||0)*ratio)});});
     }
-    // Filter any wrong-gender items
     o.items = filterGenderItems(o.items, gender);
     var total=o.items.reduce(function(s,item){return s+(parseInt(item.price)||0);},0);
     var overBudget=budgetNum>0&&total>budgetNum;
     var score=o.match_score||Math.floor(Math.random()*10)+88;
-
-    // Category icons
     var catIcons={'Top':'👕','Bottom':'👖','Shoes':'👟','Accessory':'💍','Dress':'👗','Outerwear':'🧥','Bag':'👜','Hat':'🧢'};
 
     var breakdownRows=o.items.map(function(item){
@@ -826,20 +1265,17 @@ function renderOutfits(outfits,gender,occasion,style,budgetNum){
         +'<div class="breakdown-content">'
         +'<div class="breakdown-item-name">'+item.name+'</div>'
         +(item.why?'<div class="breakdown-item-why">'+item.why+'</div>':'')
-        +'<div class="breakdown-item-price">Est. Rs.'+Number(item.price||0).toLocaleString('en-IN')+' &bull; '+item.brand+'</div>'
+        +'<div class="breakdown-item-price">Est. ₹'+Number(item.price||0).toLocaleString('en-IN')+' · '+item.brand+'</div>'
         +'<div class="breakdown-item-links">'
-        +'<a class="bl bl-img" href="'+imgUrl+'" target="_blank">Photos</a>'
+        +'<a class="bl bl-img" href="'+imgUrl+'" target="_blank">📷 Photos</a>'
         +'<a class="bl bl-amz" href="'+amzUrl+'" target="_blank"><span class="bl-logo amz-logo">a</span>Amazon</a>'
         +'<a class="bl bl-fk" href="'+fkUrl+'" target="_blank"><span class="bl-logo fk-logo">F</span>Flipkart</a>'
-        +'</div>'
-        +'</div>'
-        +'</div>';
+        +'</div></div></div>';
     }).join('');
 
     var vibeHtml=(o.vibe_tags||[]).map(function(t){return '<span class="vtag">'+t+'</span>';}).join('');
     var weatherHtml=o.weather_note?'<span class="wtag">'+o.weather_note+'</span>':'';
 
-    // Build full outfit text for copy
     var copyText='Outfit '+(i+1)+': '+o.name+'\n'+o.description+'\n\n';
     o.items.forEach(function(item){copyText+=(item.category||'Item')+': '+item.name+' ('+item.brand+') — Rs.'+item.price+'\n';});
     copyText+='\nTotal: Rs.'+total+'\n';
@@ -849,7 +1285,7 @@ function renderOutfits(outfits,gender,occasion,style,budgetNum){
 
     c.insertAdjacentHTML('beforeend',
       '<div class="outfit-card">'
-      +'<div class="outfit-top-row">'
+      +'<div class="outfit-card-header">'
       +'<div>'
       +'<div class="outfit-num">Outfit '+(i+1)+' of '+outfits.length+'</div>'
       +'<div class="outfit-name">'+o.name+'</div>'
@@ -857,30 +1293,30 @@ function renderOutfits(outfits,gender,occasion,style,budgetNum){
       +'</div>'
       +'<div class="match-badge"><div class="match-n">'+score+'%</div><div class="match-l">Match</div></div>'
       +'</div>'
+      +'<div class="outfit-body">'
       +(vibeHtml||weatherHtml?'<div class="vibe-tags">'+vibeHtml+weatherHtml+'</div>':'')
-      +'<div class="outfit-breakdown"><div class="breakdown-title">Complete outfit breakdown</div>'+breakdownRows+'</div>'
-      +'<div class="total-bar'+(overBudget?' over-bar':'')+'"><span class="total-label">Estimated total</span><span class="total-amt'+(overBudget?' over':'')+'">Rs.'+total.toLocaleString('en-IN')+(overBudget?' (over budget)':'')+'</span></div>'
-      +(o.style_tip?'<div class="tip-box">Styling tip: '+o.style_tip+'</div>':'')
+      +'<div class="outfit-breakdown"><div class="breakdown-title">Complete Outfit Breakdown</div>'+breakdownRows+'</div>'
+      +'<div class="total-bar'+(overBudget?' over-bar':'')+'"><span class="total-label">Estimated Total</span><span class="total-amt'+(overBudget?' over':'')+'">₹'+total.toLocaleString('en-IN')+(overBudget?' ⚠️ over budget':'')+'</span></div>'
+      +(o.style_tip?'<div class="tip-box">💡 '+o.style_tip+'</div>':'')
       +'<div class="outfit-actions">'
-      +'<button class="act-btn" onclick="copyOutfit(this,\''+btoa(unescape(encodeURIComponent(copyText)))+'\')">Copy Outfit</button>'
-      +'<a class="act-btn pin-btn" href="'+pinterestUrl(pq)+'" target="_blank">Pinterest</a>'
+      +'<button class="act-btn" onclick="copyOutfit(this,\''+btoa(unescape(encodeURIComponent(copyText)))+'\')">📋 Copy Outfit</button>'
+      +'<a class="act-btn pin-btn" href="'+pinterestUrl(pq)+'" target="_blank">📌 Pinterest</a>'
       +'</div>'
-      +'<button class="share-btn" onclick="shareOutfit(this,\''+btoa(unescape(encodeURIComponent(copyText)))+'\')"><span class="share-icon">&#128279;</span> Share this Outfit</button>'
+      +'<button class="share-btn" onclick="shareOutfit(this,\''+btoa(unescape(encodeURIComponent(copyText)))+'\')"><span class="share-icon">🔗</span> Share this Outfit</button>'
+      +'</div>'
       +'</div>'
     );
   });
-
-  // Regenerate button
-  c.insertAdjacentHTML('beforeend','<button class="regen-btn" onclick="regenerate()">Regenerate Outfits</button>');
+  c.insertAdjacentHTML('beforeend','<button class="regen-btn" onclick="regenerate()">↺ &nbsp;Regenerate Outfits</button>');
 }
 
 function copyOutfit(btn,b64){
   try{
     var text=decodeURIComponent(escape(atob(b64)));
     navigator.clipboard.writeText(text).then(function(){
-      btn.textContent='Copied!';btn.classList.add('copied');
+      btn.textContent='✓ Copied!';btn.classList.add('copied');
       showToast('Outfit copied to clipboard!');
-      setTimeout(function(){btn.textContent='Copy Outfit';btn.classList.remove('copied');},2500);
+      setTimeout(function(){btn.textContent='📋 Copy Outfit';btn.classList.remove('copied');},2500);
     });
   }catch(e){showToast('Could not copy. Please try again.');}
 }
@@ -889,36 +1325,20 @@ function shareOutfit(btn,b64){
   try{
     var outfitText=decodeURIComponent(escape(atob(b64)));
     var shareText='AI generated this outfit for me!\n\n'+outfitText+'\n\nTry the AI stylist here:\nhttps://pink-lotta-67.tiiny.site';
-    // Try native Web Share API first (mobile)
     if(navigator.share){
-      navigator.share({
-        title:'My AI Outfit — StyleAI',
-        text:shareText,
-        url:'https://pink-lotta-67.tiiny.site'
-      }).then(function(){
-        btn.innerHTML='<span class="share-icon">&#10003;</span> Shared!';
-        btn.classList.add('shared');
-        setTimeout(function(){btn.innerHTML='<span class="share-icon">&#128279;</span> Share this Outfit';btn.classList.remove('shared');},3000);
-      }).catch(function(){
-        // User cancelled or error - fallback to clipboard
-        copyShareToClipboard(btn,shareText);
-      });
-    } else {
-      // Fallback: copy to clipboard
-      copyShareToClipboard(btn,shareText);
-    }
+      navigator.share({title:'My AI Outfit — StyleAI',text:shareText,url:'https://pink-lotta-67.tiiny.site'})
+        .then(function(){btn.innerHTML='<span class="share-icon">✓</span> Shared!';btn.classList.add('shared');setTimeout(function(){btn.innerHTML='<span class="share-icon">🔗</span> Share this Outfit';btn.classList.remove('shared');},3000);})
+        .catch(function(){copyShareToClipboard(btn,shareText);});
+    } else {copyShareToClipboard(btn,shareText);}
   }catch(e){showToast('Could not share. Please try again.');}
 }
 
 function copyShareToClipboard(btn,text){
   navigator.clipboard.writeText(text).then(function(){
-    btn.innerHTML='<span class="share-icon">&#10003;</span> Copied! Share with friends';
-    btn.classList.add('shared');
+    btn.innerHTML='<span class="share-icon">✓</span> Copied! Share with friends';btn.classList.add('shared');
     showToast('Outfit copied! Share it with your friends.');
-    setTimeout(function(){btn.innerHTML='<span class="share-icon">&#128279;</span> Share this Outfit';btn.classList.remove('shared');},3000);
-  }).catch(function(){
-    showToast('Share this outfit with friends!');
-  });
+    setTimeout(function(){btn.innerHTML='<span class="share-icon">🔗</span> Share this Outfit';btn.classList.remove('shared');},3000);
+  }).catch(function(){showToast('Share this outfit with friends!');});
 }
 
 // ── ADMIN ──
@@ -963,17 +1383,17 @@ function admResetEmail(){localStorage.removeItem('styleai_email');localStorage.r
 function refreshAdmStats(){
   var u=getProUsers();
   var apc=document.getElementById('adm-pro-count');if(apc)apc.textContent=u.length;
-  var arv=document.getElementById('adm-revenue');if(arv)arv.textContent='Rs.'+(u.length*199).toLocaleString('en-IN');
+  var arv=document.getElementById('adm-revenue');if(arv)arv.textContent='₹'+(u.length*199).toLocaleString('en-IN');
   var atg=document.getElementById('adm-total-gen');if(atg)atg.textContent=localStorage.getItem('styleai_total_gen')||'0';
 }
 function refreshAdmList(){
   var users=getProUsers(),list=document.getElementById('adm-pro-list');if(!list)return;
   if(!users.length){list.innerHTML='<div style="font-size:13px;color:var(--muted);text-align:center;padding:16px;">No pro users yet</div>';return;}
   list.innerHTML=users.map(function(u,i){
-    return '<div style="display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:rgba(255,255,255,0.02);border:0.5px solid rgba(255,255,255,0.06);border-radius:10px;margin-bottom:6px;">'
+    return '<div style="display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:10px;margin-bottom:6px;">'
       +'<div><div style="font-size:13px;color:var(--text);">'+u.email+'</div>'
-      +'<div style="font-size:11px;color:var(--muted);margin-top:2px;">'+new Date(u.activatedAt).toLocaleDateString('en-IN')+' — Pro</div></div>'
-      +'<button onclick="admRemoveProUser('+i+')" style="background:rgba(239,68,68,0.1);border:0.5px solid rgba(239,68,68,0.2);border-radius:7px;color:#f87171;font-size:11px;padding:4px 9px;cursor:pointer;font-family:inherit;">Remove</button>'
+      +'<div style="font-size:11px;color:var(--muted);margin-top:2px;font-family:\'Space Mono\',monospace;">'+new Date(u.activatedAt).toLocaleDateString('en-IN')+' — Pro</div></div>'
+      +'<button onclick="admRemoveProUser('+i+')" style="background:rgba(255,71,87,0.1);border:1px solid rgba(255,71,87,0.2);border-radius:7px;color:#ff6b7a;font-size:11px;padding:4px 9px;cursor:pointer;font-family:\'DM Sans\',sans-serif;">Remove</button>'
       +'</div>';
   }).join('');
 }
@@ -986,7 +1406,8 @@ function checkUserProStatus(){
 
 // ── INIT ──
 window.addEventListener('DOMContentLoaded',function(){
-  updateBar();initEmail();initAdmin();checkUserProStatus();
+  if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(function(){});}
+  updateBar();updateHistCount();initEmail();initAdmin();checkUserProStatus();
   var uo=document.getElementById('upgrade-overlay');
   if(uo)uo.addEventListener('click',function(e){if(e.target===uo)closeUpgrade();});
   var ao=document.getElementById('admin-overlay');
