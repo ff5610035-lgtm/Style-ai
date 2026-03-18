@@ -1300,7 +1300,7 @@ function disableAppBtn(app, s) {
 
 function checkAllProStatus() {
   var email = localStorage.getItem('hub_email'); if (!email) return;
-  // Check pro users for each app
+  // Check if this email is in the pro users list for any app
   ['style','rest','scent'].forEach(function(app) {
     var users = JSON.parse(localStorage.getItem('hub_pro_users_' + app) || '[]');
     if (users.find(function(u){ return u.email === email; })) {
@@ -1673,34 +1673,55 @@ function admActivatePro() {
   var el = document.getElementById('adm-activate-email');
   var email = el ? el.value.trim().toLowerCase() : '';
   if (!email || !email.includes('@')) { showToast('Enter a valid email!'); return; }
-  var users = admGetProUsers(admCurrentApp);
-  if (users.find(function(u){ return u.email === email; })) { showToast('Already Pro!'); return; }
-  users.push({ email: email, activatedAt: new Date().toISOString(), app: admCurrentApp });
-  admSaveProUsers(admCurrentApp, users);
+
+  // Activate on ALL 3 apps at once
+  var alreadyAll = true;
+  ['style','rest','scent'].forEach(function(app) {
+    var users = admGetProUsers(app);
+    if (!users.find(function(u){ return u.email === email; })) {
+      alreadyAll = false;
+      users.push({ email: email, activatedAt: new Date().toISOString(), app: app });
+      admSaveProUsers(app, users);
+    }
+  });
+
+  if (alreadyAll) { showToast('User already has Pro on all apps!'); return; }
+
   if (el) el.value = '';
-  // If this device uses that email, activate locally too
+
+  // If the currently logged-in device has this email, activate locally for all apps
   if (localStorage.getItem('hub_email') === email) {
-    localStorage.setItem('hub_pro_' + admCurrentApp, '1');
-    updateBar(admCurrentApp);
+    ['style','rest','scent'].forEach(function(app) {
+      localStorage.setItem('hub_pro_' + app, '1');
+      updateBar(app);
+    });
+    showToast(email + ' activated as Pro on all 3 apps! ✓');
+  } else {
+    showToast(email + ' will get Pro next time they open the app ✓');
   }
+
   admRefreshAll();
-  admLogActivity('pro', 'Pro activated: ' + email + ' (' + admCurrentApp + ')');
-  showToast(email + ' activated as Pro!');
+  admLogActivity('pro', 'Pro activated (all apps): ' + email);
 }
 
 function admRevokePro() {
   var el = document.getElementById('adm-revoke-email');
   var email = el ? el.value.trim().toLowerCase() : '';
   if (!email || !email.includes('@')) { showToast('Enter a valid email!'); return; }
-  admSaveProUsers(admCurrentApp, admGetProUsers(admCurrentApp).filter(function(u){ return u.email !== email; }));
+
+  // Revoke from ALL 3 apps
+  ['style','rest','scent'].forEach(function(app) {
+    admSaveProUsers(app, admGetProUsers(app).filter(function(u){ return u.email !== email; }));
+    if (localStorage.getItem('hub_email') === email) {
+      localStorage.removeItem('hub_pro_' + app);
+      updateBar(app);
+    }
+  });
+
   if (el) el.value = '';
-  if (localStorage.getItem('hub_email') === email) {
-    localStorage.removeItem('hub_pro_' + admCurrentApp);
-    updateBar(admCurrentApp);
-  }
   admRefreshAll();
-  admLogActivity('admin', 'Pro revoked: ' + email + ' (' + admCurrentApp + ')');
-  showToast('Pro revoked for ' + email);
+  admLogActivity('admin', 'Pro revoked (all apps): ' + email);
+  showToast('Pro revoked for ' + email + ' on all apps');
 }
 
 function admRemoveUser(app, i) {
@@ -1860,6 +1881,8 @@ document.addEventListener('DOMContentLoaded', function(){
 });
 window.addEventListener('DOMContentLoaded', function() {
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function(){});
+  updateAllBars();
+  checkAllProStatus(); // Always check on load — activates Pro if admin already added their email
   initHub();
   document.getElementById('upgrade-overlay').addEventListener('click', function(e){ if(e.target===this) closeUpgrade(); });
   document.getElementById('email-overlay').addEventListener('click', function(e){ if(e.target===this) skipHubEmail(); });
