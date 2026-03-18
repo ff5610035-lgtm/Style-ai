@@ -1674,34 +1674,65 @@ function admActivatePro() {
   var email = el ? el.value.trim().toLowerCase() : '';
   if (!email || !email.includes('@')) { showToast('Enter a valid email!'); return; }
 
-  // Activate on ALL 3 apps at once
-  var alreadyAll = true;
+  // Save to localStorage pro list (for this device)
   ['style','rest','scent'].forEach(function(app) {
     var users = admGetProUsers(app);
     if (!users.find(function(u){ return u.email === email; })) {
-      alreadyAll = false;
-      users.push({ email: email, activatedAt: new Date().toISOString(), app: app });
+      users.push({ email: email, activatedAt: new Date().toISOString() });
       admSaveProUsers(app, users);
     }
   });
 
-  if (alreadyAll) { showToast('User already has Pro on all apps!'); return; }
+  // Write to Google Sheet so user's device can pick it up
+  fetch(SHEET, {
+    method: 'POST', mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      type: 'activate_pro',
+      email: email,
+      apps: 'style,rest,scent',
+      activatedAt: new Date().toISOString(),
+      time: new Date().toLocaleString()
+    })
+  }).catch(function(){});
 
   if (el) el.value = '';
 
-  // If the currently logged-in device has this email, activate locally for all apps
+  // If THIS device has that email, activate immediately
   if (localStorage.getItem('hub_email') === email) {
     ['style','rest','scent'].forEach(function(app) {
       localStorage.setItem('hub_pro_' + app, '1');
       updateBar(app);
     });
-    showToast(email + ' activated as Pro on all 3 apps! ✓');
-  } else {
-    showToast(email + ' will get Pro next time they open the app ✓');
   }
 
   admRefreshAll();
-  admLogActivity('pro', 'Pro activated (all apps): ' + email);
+  admLogActivity('pro', 'Pro activated: ' + email);
+  showToast(email + ' activated as Pro ✓ — they get it next time they open the app!');
+}
+
+// Check pro status from Google Sheet (runs on every page load)
+async function checkProFromSheet() {
+  var email = localStorage.getItem('hub_email');
+  if (!email) return;
+  // If already Pro on all apps, no need to check
+  if (isPro('style') && isPro('rest') && isPro('scent')) return;
+  try {
+    var url = SHEET + '?type=check_pro&email=' + encodeURIComponent(email) + '&t=' + Date.now();
+    var res = await fetch(url, { method: 'GET', mode: 'cors' });
+    if (!res.ok) return;
+    var data = await res.json();
+    if (data && data.isPro) {
+      ['style','rest','scent'].forEach(function(app) {
+        localStorage.setItem('hub_pro_' + app, '1');
+        updateBar(app);
+      });
+      showToast('Pro plan activated! Unlimited access unlocked ✦');
+    }
+  } catch(e) {
+    // Sheet doesn't support GET check yet — fall back to local list
+    checkAllProStatus();
+  }
 }
 
 function admRevokePro() {
@@ -1882,7 +1913,8 @@ document.addEventListener('DOMContentLoaded', function(){
 window.addEventListener('DOMContentLoaded', function() {
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function(){});
   updateAllBars();
-  checkAllProStatus(); // Always check on load — activates Pro if admin already added their email
+  checkAllProStatus(); // check local list first (instant)
+  checkProFromSheet(); // then check sheet (async — catches admin activations)
   initHub();
   document.getElementById('upgrade-overlay').addEventListener('click', function(e){ if(e.target===this) closeUpgrade(); });
   document.getElementById('email-overlay').addEventListener('click', function(e){ if(e.target===this) skipHubEmail(); });
