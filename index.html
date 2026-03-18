@@ -782,6 +782,114 @@ body{
 }
 .scent-mode-btn:hover{border-color:rgba(201,168,76,0.3);color:rgba(245,239,230,0.6);}
 .scent-mode-btn.active{background:rgba(201,168,76,0.12);border-color:var(--gold2);color:var(--gold2);}
+
+/* ── ITEM IMAGE PREVIEW ── */
+.item-img-wrap{
+  width:90px;height:110px;border-radius:var(--r);
+  background:rgba(255,255,255,0.04);border:1px solid var(--border);
+  overflow:hidden;flex-shrink:0;position:relative;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;
+}
+.item-img-wrap:hover{border-color:var(--pink);}
+.item-img-wrap img{
+  width:100%;height:100%;object-fit:cover;
+  transition:opacity 0.4s,transform 0.3s;
+}
+.item-img-wrap:hover img{transform:scale(1.05);}
+.item-img-loading{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  background:rgba(255,255,255,0.03);
+  font-size:24px;opacity:0.2;
+}
+.item-img-badge{
+  position:absolute;bottom:0;left:0;right:0;
+  background:rgba(0,0,0,0.75);
+  padding:3px 5px;font-size:9px;color:rgba(255,255,255,0.7);
+  text-align:center;font-family:'Space Mono',monospace;
+  letter-spacing:0.3px;
+}
+@keyframes imgfade{from{opacity:0}to{opacity:1}}
+
+/* ════════════════════════════════════════
+   HISTORY SCREEN
+════════════════════════════════════════ */
+#screen-history{background:var(--bg);}
+.hist-header{padding:28px 20px 16px;display:flex;align-items:center;justify-content:space-between;max-width:720px;margin:0 auto;}
+.hist-title{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:1px;}
+.hist-clear{padding:7px 14px;background:rgba(255,71,87,0.06);border:1px solid rgba(255,71,87,0.15);border-radius:var(--r);color:#f87171;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all 0.2s;}
+.hist-clear:hover{background:rgba(255,71,87,0.12);}
+.hist-tabs{display:flex;gap:8px;padding:0 20px 16px;max-width:720px;margin:0 auto;overflow-x:auto;}
+.hist-tab{padding:8px 18px;border-radius:20px;border:1px solid var(--border);background:var(--surface);font-size:12px;font-weight:600;color:var(--muted2);font-family:'DM Sans',sans-serif;cursor:pointer;transition:all 0.2s;white-space:nowrap;}
+.hist-tab.active{background:rgba(255,45,120,0.1);border-color:var(--pink);color:var(--pink2);}
+.hist-list{max-width:720px;margin:0 auto;padding:0 16px 80px;display:flex;flex-direction:column;gap:12px;}
+.hist-empty{text-align:center;padding:60px 24px;color:var(--muted2);}
+.hist-empty-icon{font-size:40px;margin-bottom:12px;opacity:0.3;}
+.hist-empty-text{font-size:14px;line-height:1.7;}
+.hist-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-xl);overflow:hidden;transition:border-color 0.2s,transform 0.2s;}
+.hist-card:hover{transform:translateY(-2px);}
+.hist-card.hc-style:hover{border-color:rgba(255,45,120,0.25);}
+.hist-card.hc-rest:hover{border-color:rgba(255,95,46,0.25);}
+.hist-card.hc-scent:hover{border-color:rgba(201,168,76,0.25);}
+.hist-card-top{display:flex;align-items:flex-start;justify-content:space-between;padding:14px 16px 10px;gap:10px;}
+.hist-card-app{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;font-family:'Space Mono',monospace;margin-bottom:4px;}
+.hc-style .hist-card-app{color:var(--pink2);}
+.hc-rest .hist-card-app{color:var(--orange2);}
+.hc-scent .hist-card-app{color:var(--gold2);}
+.hist-card-title{font-size:15px;font-weight:700;letter-spacing:-0.2px;margin-bottom:3px;}
+.hist-card-meta{font-size:11px;color:var(--muted2);font-family:'Space Mono',monospace;}
+.hist-card-actions{display:flex;gap:6px;flex-shrink:0;}
+.hca-btn{padding:6px 12px;border-radius:var(--r);font-size:11px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all 0.2s;border:1px solid var(--border);background:transparent;color:var(--muted2);}
+.hca-btn:hover{background:rgba(255,255,255,0.06);color:var(--text);}
+.hca-delete{color:#f87171;border-color:rgba(255,71,87,0.15);}
+.hca-delete:hover{background:rgba(255,71,87,0.08);}
+.hist-card-preview{padding:0 16px 14px;font-size:12.5px;color:var(--muted2);line-height:1.6;border-top:1px solid var(--border);padding-top:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.hist-card-tags{display:flex;gap:6px;flex-wrap:wrap;padding:8px 16px;border-top:1px solid var(--border);}
+.hist-tag{font-size:10px;padding:2px 8px;border-radius:4px;font-family:'Space Mono',monospace;}
+.hc-style .hist-tag{background:rgba(255,45,120,0.08);color:var(--pink2);}
+.hc-rest .hist-tag{background:rgba(255,95,46,0.08);color:var(--orange2);}
+.hc-scent .hist-tag{background:rgba(201,168,76,0.08);color:var(--gold2);}
+
+/* History tab nav colors */
+.nav-tab-history.active .nav-tab-label{color:#a78bfa;}
+.nav-tab-history.active::before{background:#7c3aed;}
+
+/* Saved result modal */
+.saved-modal{position:fixed;inset:0;background:rgba(0,0,0,0.92);backdrop-filter:blur(20px);z-index:4000;display:flex;flex-direction:column;overflow:hidden;}
+.saved-modal.hidden{display:none!important;}
+.saved-modal-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border);background:var(--surface);}
+.saved-modal-title{font-size:16px;font-weight:700;}
+.saved-modal-close{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,0.06);border:1px solid var(--border);color:var(--text);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.saved-modal-body{flex:1;overflow-y:auto;padding:20px;}
+.saved-modal-actions{padding:14px 20px;border-top:1px solid var(--border);display:flex;gap:8px;background:var(--surface);}
+
+/* ── PAYMENT VERIFY MODAL ── */
+.pay-verify-box{
+  background:#13131f;border:1px solid rgba(16,185,129,0.25);
+  border-radius:var(--r-xl);padding:36px 28px;max-width:420px;
+  width:100%;text-align:center;
+  animation:slideUp 0.45s cubic-bezier(0.16,1,0.3,1);
+  box-shadow:0 24px 80px rgba(0,0,0,0.6);
+  position:relative;overflow:hidden;
+}
+.pay-verify-box::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--green),transparent);}
+.pay-steps{display:flex;flex-direction:column;gap:10px;margin:16px 0 20px;text-align:left;}
+.pay-step{display:flex;align-items:flex-start;gap:12px;padding:10px 12px;background:rgba(255,255,255,0.03);border-radius:var(--r);border:1px solid var(--border);}
+.pay-step-num{width:24px;height:24px;border-radius:50%;background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.25);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--green);flex-shrink:0;font-family:'Space Mono',monospace;}
+.pay-step-text{font-size:13px;color:var(--muted2);line-height:1.5;}
+.pay-step-text strong{color:var(--text);}
+.pay-upi-box{background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:var(--r);padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.pay-upi-id{font-family:'Space Mono',monospace;font-size:15px;color:var(--green);font-weight:700;}
+.pay-copy-upi{padding:6px 12px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2);border-radius:6px;color:var(--green);font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;white-space:nowrap;transition:all 0.2s;}
+.pay-copy-upi:hover{background:rgba(16,185,129,0.2);}
+.pay-txn-input{width:100%;background:#fff;border:1.5px solid rgba(255,255,255,0.15);border-radius:var(--r);padding:13px 16px;font-size:14px;color:#111;font-family:'Space Mono',monospace;outline:none;margin-bottom:10px;transition:all 0.2s;display:block;letter-spacing:1px;}
+.pay-txn-input:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(16,185,129,0.1);}
+.pay-txn-input::placeholder{color:#999;font-family:'DM Sans',sans-serif;letter-spacing:0;}
+.pay-submit-btn{width:100%;padding:14px;background:linear-gradient(135deg,var(--green),#059669);color:#fff;border:none;border-radius:var(--r);font-size:15px;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all 0.2s;box-shadow:0 4px 20px rgba(16,185,129,0.3);margin-bottom:10px;}
+.pay-submit-btn:hover{transform:translateY(-2px);}
+.pay-submit-btn:disabled{opacity:0.4;cursor:not-allowed;transform:none;}
+.pay-skip{font-size:12px;color:var(--muted);cursor:pointer;text-decoration:underline;}
+.pay-note{font-size:11px;color:var(--muted);margin-top:10px;line-height:1.6;}
 </style>
 </head>
 <body>
@@ -894,17 +1002,135 @@ body{
           <div class="fg"><label>Gender *</label><select id="style-gender"><option value="">Select...</option><option value="Male">Male</option><option value="Female">Female</option><option value="Unisex">Unisex</option></select></div>
         </div>
         <div class="fg-grid">
-          <div class="fg" id="fg-occasion"><label>Occasion *</label><select id="style-occasion"><option value="">Select...</option><option value="Casual">Casual</option><option value="College">College</option><option value="Office">Office / Work</option><option value="Wedding">Wedding / Festive</option><option value="Party">Party / Nightout</option><option value="Date Night">Date Night</option><option value="Travel">Travel / Holiday</option><option value="Gym">Gym / Sport</option><option value="Beach">Beach</option></select><div class="fg-err">Please select an occasion</div></div>
-          <div class="fg"><label>Style</label><select id="style-style"><option value="">Select...</option><optgroup label="🔥 Gen Z Vibes"><option value="GenZ Baggy">Gen Z Baggy / Oversized</option><option value="Y2K">Y2K / 2000s Comeback</option><option value="Streetwear Hypebeast">Streetwear / Hypebeast</option><option value="Soft Aesthetic">Soft Aesthetic / Cottagecore</option><option value="Dark Academia">Dark Academia</option><option value="E-Boy E-Girl">E-Boy / E-Girl</option><option value="Gorpcore Outdoorsy">Gorpcore / Outdoorsy</option></optgroup><optgroup label="Classic Styles"><option value="Minimal">Minimal / Clean</option><option value="Streetwear">Streetwear</option><option value="Luxury">Luxury / Designer</option><option value="Sporty">Sporty / Athletic</option><option value="Formal">Formal / Classic</option><option value="Vintage">Vintage / Retro</option><option value="Boho">Boho / Indie</option><option value="Ethnic">Ethnic / Traditional</option></optgroup></select></div>
+          <div class="fg" id="fg-occasion"><label>Occasion *</label><select id="style-occasion">
+<option value="">Select...</option>
+<optgroup label="🏫 Daily Life">
+  <option value="Casual Daily">Casual / Everyday</option>
+  <option value="College Campus">College / Campus</option>
+  <option value="Street Hangout">Street Hangout</option>
+  <option value="Mall Shopping">Mall / Shopping Trip</option>
+  <option value="Movie Outing">Movie / Cinema</option>
+  <option value="Cafe Brunch">Cafe / Brunch</option>
+</optgroup>
+<optgroup label="💼 Work & Formal">
+  <option value="Office Corporate">Office / Corporate</option>
+  <option value="Business Meeting">Business Meeting</option>
+  <option value="Job Interview">Job Interview</option>
+  <option value="Formal Event">Formal Event / Gala</option>
+</optgroup>
+<optgroup label="🎉 Social & Party">
+  <option value="Party Nightout">Party / Night Out</option>
+  <option value="Club Lounge">Club / Lounge</option>
+  <option value="Date Night">Date Night / Romantic</option>
+  <option value="Friend Hangout">Friends Hangout</option>
+  <option value="Rooftop Evening">Rooftop / Evening Event</option>
+  <option value="House Party">House Party</option>
+</optgroup>
+<optgroup label="🪔 Indian Occasions">
+  <option value="Wedding Guest">Wedding (Guest)</option>
+  <option value="Wedding Baraat">Wedding (Baraat / Groom)</option>
+  <option value="Wedding Bride">Wedding (Bride / Bridesmaid)</option>
+  <option value="Diwali Festival">Diwali / Festival</option>
+  <option value="Eid Celebration">Eid / Religious Celebration</option>
+  <option value="Puja Ceremony">Puja / Ceremony</option>
+  <option value="Sangeet Function">Sangeet / Mehendi</option>
+  <option value="Holi Festival">Holi Party</option>
+</optgroup>
+<optgroup label="✈️ Travel & Outdoor">
+  <option value="Travel Holiday">Travel / Holiday Trip</option>
+  <option value="Hill Station">Hill Station / Mountains</option>
+  <option value="Beach Vacation">Beach / Goa Vacation</option>
+  <option value="Road Trip">Road Trip</option>
+  <option value="Trekking Hiking">Trekking / Hiking</option>
+  <option value="Picnic Park">Picnic / Park Outing</option>
+</optgroup>
+<optgroup label="💪 Active & Sport">
+  <option value="Gym Workout">Gym / Workout</option>
+  <option value="Running Jogging">Running / Jogging</option>
+  <option value="Cricket Match">Cricket / Sports Match</option>
+  <option value="Yoga Meditation">Yoga / Meditation</option>
+  <option value="Swimming Pool">Swimming / Pool Party</option>
+</optgroup>
+<optgroup label="🎓 Special">
+  <option value="Graduation Ceremony">Graduation Ceremony</option>
+  <option value="Birthday Party">Birthday Party</option>
+  <option value="Anniversary Dinner">Anniversary Dinner</option>
+  <option value="Photoshoot">Photoshoot / Content Creation</option>
+  <option value="Concert Event">Concert / Live Event</option>
+  <option value="Gaming LAN Party">Gaming / LAN Party</option>
+</optgroup>
+</select><div class="fg-err">Please select an occasion</div></div>
+          <div class="fg"><label>Style</label><select id="style-style">
+<option value="">Select...</option>
+<optgroup label="🔥 Gen Z / Trendy">
+  <option value="GenZ Baggy">Gen Z Baggy / Oversized</option>
+  <option value="Y2K">Y2K / 2000s Comeback</option>
+  <option value="Streetwear Hypebeast">Streetwear / Hypebeast</option>
+  <option value="Soft Aesthetic">Soft Aesthetic / Cottagecore</option>
+  <option value="Dark Academia">Dark Academia</option>
+  <option value="E-Boy E-Girl">E-Boy / E-Girl</option>
+  <option value="Gorpcore Outdoorsy">Gorpcore / Outdoorsy</option>
+  <option value="Clean Quiet Luxury">Clean / Quiet Luxury</option>
+  <option value="Old Money">Old Money Aesthetic</option>
+  <option value="Mob Wife">Mob Wife / Maximalist</option>
+  <option value="Coconut Girl">Coconut Girl / Coastal</option>
+  <option value="Tomboy Core">Tomboy Core</option>
+  <option value="Coquette">Coquette / Feminine</option>
+</optgroup>
+<optgroup label="🇮🇳 Indian Fusion">
+  <option value="Indo Western">Indo Western Fusion</option>
+  <option value="Ethnic Traditional">Ethnic / Traditional</option>
+  <option value="Desi Streetwear">Desi Streetwear</option>
+  <option value="Royal Ethnic">Royal / Heritage Ethnic</option>
+</optgroup>
+<optgroup label="✨ Classic Styles">
+  <option value="Minimal">Minimal / Clean</option>
+  <option value="Luxury">Luxury / Designer</option>
+  <option value="Sporty">Sporty / Athletic</option>
+  <option value="Formal">Formal / Classic</option>
+  <option value="Vintage">Vintage / Retro</option>
+  <option value="Boho">Boho / Indie</option>
+  <option value="Preppy">Preppy / College</option>
+  <option value="Smart Casual">Smart Casual</option>
+  <option value="Business Casual">Business Casual</option>
+</optgroup>
+</select></div>
         </div>
         <div class="fg-grid">
-          <div class="fg"><label>Weather</label><select id="style-weather"><option value="">Select...</option><option value="Hot">Hot / Summer</option><option value="Cold">Cold / Winter</option><option value="Rainy">Rainy / Monsoon</option><option value="Mild">Mild / Pleasant</option></select></div>
-          <div class="fg"><label>Body Type</label><select id="style-bodytype"><option value="">Select...</option><option value="Slim">Slim</option><option value="Athletic">Athletic</option><option value="Average">Average</option><option value="Plus Size">Plus Size</option><option value="Tall">Tall</option><option value="Petite">Petite</option></select></div>
+          <div class="fg"><label>Weather</label><select id="style-weather">
+<option value="">Select...</option>
+<option value="Very Hot">Very Hot 35°C+ (Peak Summer)</option>
+<option value="Hot">Hot / Summer (28-35°C)</option>
+<option value="Mild">Mild / Pleasant (20-28°C)</option>
+<option value="Cool">Cool / Breezy (15-20°C)</option>
+<option value="Cold">Cold / Winter (below 15°C)</option>
+<option value="Very Cold">Very Cold (Himachal / Hill Station)</option>
+<option value="Rainy">Rainy / Monsoon</option>
+<option value="Humid Coastal">Humid / Coastal (Mumbai / Chennai)</option>
+</select></div>
+          <div class="fg"><label>Body Type</label><select id="style-bodytype">
+<option value="">Select...</option>
+<option value="Slim Lean">Slim / Lean</option>
+<option value="Athletic Muscular">Athletic / Muscular</option>
+<option value="Average">Average / Regular</option>
+<option value="Plus Size Curvy">Plus Size / Curvy</option>
+<option value="Tall Slim">Tall & Slim</option>
+<option value="Tall Athletic">Tall & Athletic</option>
+<option value="Petite Short">Petite / Short</option>
+<option value="Pear Shaped">Pear Shaped (wider hips)</option>
+<option value="Apple Shaped">Apple Shaped (broader shoulders)</option>
+<option value="Hourglass">Hourglass</option>
+</select></div>
         </div>
         <div class="fg-grid three">
           <div class="fg"><label>Top Size</label><select id="style-topsize"><option value="">Any</option><option>XS</option><option>S</option><option>M</option><option>L</option><option>XL</option><option>XXL</option></select></div>
           <div class="fg"><label>Bottom Size</label><select id="style-botsize"><option value="">Any</option><option>26</option><option>28</option><option>30</option><option>32</option><option>34</option><option>36</option><option>S</option><option>M</option><option>L</option><option>XL</option></select></div>
           <div class="fg"><label>Shoe Size</label><input type="text" id="style-shoesize" placeholder="e.g. 8"/></div>
+        </div>
+        <div class="form-divider"><div class="form-divider-line"></div><div class="form-divider-label">Preferences</div><div class="form-divider-line"></div></div>
+        <div class="fg-grid">
+          <div class="fg"><label>Fit Preference</label><select id="style-fit"><option value="">Any Fit</option><option value="Oversized very baggy">Very Oversized / Baggy</option><option value="Oversized relaxed">Oversized / Relaxed</option><option value="Regular fit">Regular Fit</option><option value="Slim fit">Slim Fit</option><option value="Skinny tight">Skinny / Tight</option><option value="Cropped short">Cropped</option></select></div>
+          <div class="fg"><label>Number of Outfits</label><select id="style-count"><option value="3">3 Outfits</option><option value="5">5 Outfits</option></select></div>
         </div>
         <div class="form-divider"><div class="form-divider-line"></div><div class="form-divider-label">Extras</div><div class="form-divider-line"></div></div>
         <div class="fg" style="margin-bottom:12px;"><label>Colour Preference</label><input type="text" id="style-color" placeholder="e.g. black and white, pastels, no red..."/></div>
@@ -1200,6 +1426,45 @@ body{
     </div>
   </div>
 
+  <!-- ══════ HISTORY SCREEN ══════ -->
+  <div id="screen-history" class="screen">
+    <div class="s-usage-bar" style="border-bottom:1px solid rgba(124,58,237,0.15);">
+      <div class="s-ub-inner">
+        <span style="font-size:11px;color:#a78bfa;font-family:'Space Mono',monospace;letter-spacing:1px;">📚 SAVED HISTORY</span>
+        <span style="font-size:11px;color:var(--muted2);margin-left:auto;" id="hist-count-label">0 saved</span>
+      </div>
+    </div>
+    <div class="hist-header">
+      <div class="hist-title">Your History</div>
+      <button class="hist-clear" onclick="histClearAll()">🗑 Clear All</button>
+    </div>
+    <div class="hist-tabs">
+      <button class="hist-tab active" id="htab-all" onclick="histFilter('all',this)">All</button>
+      <button class="hist-tab" id="htab-style" onclick="histFilter('style',this)">👗 StyleAI</button>
+      <button class="hist-tab" id="htab-rest" onclick="histFilter('rest',this)">🍽️ Restaurant</button>
+      <button class="hist-tab" id="htab-scent" onclick="histFilter('scent',this)">🫙 ScentAI</button>
+    </div>
+    <div class="hist-list" id="hist-list">
+      <div class="hist-empty">
+        <div class="hist-empty-icon">📭</div>
+        <div class="hist-empty-text">No history yet.<br/>Generate outfits, restaurant content or perfume dupes<br/>and they'll be saved here automatically.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════ SAVED RESULT MODAL ══════ -->
+  <div class="saved-modal hidden" id="saved-modal">
+    <div class="saved-modal-header">
+      <div class="saved-modal-title" id="saved-modal-title">Saved Result</div>
+      <button class="saved-modal-close" onclick="closeSavedModal()">✕</button>
+    </div>
+    <div class="saved-modal-body" id="saved-modal-body"></div>
+    <div class="saved-modal-actions">
+      <button class="out-btn btn-copy" style="flex:1;" onclick="copySavedModal()">📋 Copy All</button>
+      <button class="out-btn btn-regen" style="flex:1;" onclick="reuseFromHistory()">↺ Use Again</button>
+    </div>
+  </div>
+
 </div><!-- end #screens -->
 
 <!-- ════════════════════════════════
@@ -1221,6 +1486,10 @@ body{
   <button class="nav-tab nav-tab-scent" onclick="switchScreen('scent')" id="tab-scent">
     <span class="nav-tab-icon">🫙</span>
     <span class="nav-tab-label">ScentAI</span>
+  </button>
+  <button class="nav-tab nav-tab-history" onclick="switchScreen('history')" id="tab-history">
+    <span class="nav-tab-icon">📚</span>
+    <span class="nav-tab-label">History</span>
   </button>
   <button class="nav-tab nav-tab-admin" onclick="switchScreen('admin')" id="tab-admin">
     <span class="nav-tab-icon">⚙️</span>
@@ -1249,6 +1518,43 @@ body{
 </div>
 
 <!-- ════════════════════════════════
+     PAYMENT VERIFY MODAL
+════════════════════════════════ -->
+<div class="overlay hidden" id="pay-verify-overlay">
+  <div class="pay-verify-box">
+    <span style="font-size:44px;display:block;margin-bottom:12px;">💳</span>
+    <div style="font-size:24px;font-weight:800;letter-spacing:-0.5px;margin-bottom:6px;color:var(--green);">Complete Payment</div>
+    <div style="font-size:13px;color:var(--muted2);line-height:1.6;margin-bottom:16px;" id="pay-verify-sub">Pay to activate your Pro plan</div>
+
+    <div class="pay-steps">
+      <div class="pay-step"><div class="pay-step-num">1</div><div class="pay-step-text">Open any UPI app — <strong>GPay, PhonePe, Paytm</strong></div></div>
+      <div class="pay-step"><div class="pay-step-num">2</div><div class="pay-step-text">Pay <strong id="pay-verify-amount">₹199</strong> to this UPI ID:</div></div>
+    </div>
+
+    <div class="pay-upi-box">
+      <div class="pay-upi-id">aliarsad@fam</div>
+      <button class="pay-copy-upi" onclick="copyUPI()">📋 Copy</button>
+    </div>
+
+    <div class="pay-step" style="margin-bottom:16px;border:1px solid rgba(16,185,129,0.15);border-radius:var(--r);padding:10px 12px;">
+      <div class="pay-step-num">3</div>
+      <div class="pay-step-text">After paying, enter your <strong>UPI Transaction ID</strong> below and tap Submit:</div>
+    </div>
+
+    <input type="text" class="pay-txn-input" id="pay-txn-id" placeholder="Enter Transaction ID (e.g. 425891637200)" maxlength="30"/>
+    <input type="text" class="pay-txn-input" id="pay-txn-name" placeholder="Your name (so we can identify you)" maxlength="50" style="margin-top:-4px;"/>
+
+    <button class="pay-submit-btn" id="pay-submit-btn" onclick="submitPayment()">✅ Submit & Verify Payment</button>
+    <div class="pay-skip" onclick="closePayVerify()">I'll pay later</div>
+    <div class="pay-note">
+      ⏱ We manually verify payments within <strong>1-2 hours</strong>.<br/>
+      Once verified, Pro will activate automatically next time you open the app.<br/>
+      WhatsApp us at <strong>your-number</strong> if you need faster activation.
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════
      SHARED EMAIL OVERLAY
 ════════════════════════════════ -->
 <div class="overlay hidden" id="email-overlay">
@@ -1271,6 +1577,149 @@ var GROQ_KEY = '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';
 var MODEL = 'llama-3.3-70b-versatile';
 var SHEET = 'https://script.google.com/macros/s/AKfycbzHxu2y5RdWbcrgXETrCU45SRfKB9ee2JudPNPh5MldpyamEbAvf0GUUshn7DiyLH79sg/exec';
 var toastTimer, currentUpgradeApp = 'style';
+
+
+/* ════════════════════════════════════════
+   HISTORY / CHAT STORAGE SYSTEM
+════════════════════════════════════════ */
+var HIST_KEY = 'hub_history_v2';
+var HIST_MAX = 100;
+var histCurrentFilter = 'all';
+var histCurrentItem = null;
+
+function histSave(app, title, subtitle, tags, content, inputData) {
+  var history = histGetAll();
+  var entry = {
+    id: Date.now(),
+    app: app,
+    title: title,
+    subtitle: subtitle || '',
+    tags: tags || [],
+    content: content,
+    inputData: inputData || {},
+    savedAt: new Date().toLocaleString('en-IN')
+  };
+  history.unshift(entry);
+  if (history.length > HIST_MAX) history = history.slice(0, HIST_MAX);
+  localStorage.setItem(HIST_KEY, JSON.stringify(history));
+  histUpdateCount();
+  // Flash the history tab
+  var tab = document.getElementById('tab-history');
+  if (tab) { tab.style.transform = 'scale(1.2)'; setTimeout(function(){ tab.style.transform = ''; }, 400); }
+}
+
+function histGetAll() {
+  try { return JSON.parse(localStorage.getItem(HIST_KEY) || '[]'); } catch(e) { return []; }
+}
+
+function histUpdateCount() {
+  var count = histGetAll().length;
+  var label = document.getElementById('hist-count-label');
+  if (label) label.textContent = count + ' saved';
+}
+
+function histFilter(type, btn) {
+  histCurrentFilter = type;
+  document.querySelectorAll('.hist-tab').forEach(function(t){ t.classList.remove('active'); });
+  if (btn) btn.classList.add('active');
+  histRender();
+}
+
+function histRender() {
+  var all = histGetAll();
+  var filtered = histCurrentFilter === 'all' ? all : all.filter(function(h){ return h.app === histCurrentFilter; });
+  var list = document.getElementById('hist-list');
+  if (!list) return;
+  if (!filtered.length) {
+    list.innerHTML = '<div class="hist-empty"><div class="hist-empty-icon">📭</div><div class="hist-empty-text">No ' + (histCurrentFilter === 'all' ? '' : histCurrentFilter + ' ') + 'history yet.<br/>Your generations will be saved here automatically.</div></div>';
+    return;
+  }
+  var appClass = { style: 'hc-style', rest: 'hc-rest', scent: 'hc-scent' };
+  var appIcon  = { style: '👗', rest: '🍽️', scent: '🫙' };
+  var appName  = { style: 'StyleAI', rest: 'Restaurant AI', scent: 'ScentAI' };
+  list.innerHTML = filtered.map(function(h) {
+    var cls = appClass[h.app] || 'hc-style';
+    var tags = (h.tags||[]).slice(0,4).map(function(t){ return '<span class="hist-tag">'+t+'</span>'; }).join('');
+    var preview = (h.content||'').replace(/<[^>]+>/g,'').substring(0,100) + '...';
+    return '<div class="hist-card ' + cls + '" onclick="histOpen(' + h.id + ')">'
+      + '<div class="hist-card-top">'
+      + '<div><div class="hist-card-app">' + (appIcon[h.app]||'') + ' ' + (appName[h.app]||h.app) + '</div>'
+      + '<div class="hist-card-title">' + (h.title||'Untitled') + '</div>'
+      + '<div class="hist-card-meta">' + h.savedAt + '</div></div>'
+      + '<div class="hist-card-actions">'
+      + '<button class="hca-btn" onclick="event.stopPropagation();histReuse(' + h.id + ')">↺ Reuse</button>'
+      + '<button class="hca-btn hca-delete" onclick="event.stopPropagation();histDelete(' + h.id + ')">✕</button>'
+      + '</div></div>'
+      + '<div class="hist-card-preview">' + preview + '</div>'
+      + (tags ? '<div class="hist-card-tags">' + tags + '</div>' : '')
+      + '</div>';
+  }).join('');
+}
+
+function histOpen(id) {
+  var all = histGetAll();
+  var item = all.find(function(h){ return h.id === id; });
+  if (!item) return;
+  histCurrentItem = item;
+  var modal = document.getElementById('saved-modal');
+  var titleEl = document.getElementById('saved-modal-title');
+  var bodyEl = document.getElementById('saved-modal-body');
+  if (!modal || !titleEl || !bodyEl) return;
+  titleEl.textContent = item.title || 'Saved Result';
+  bodyEl.innerHTML = item.content || '<p style="color:var(--muted2)">No content saved</p>';
+  modal.classList.remove('hidden');
+}
+
+function closeSavedModal() {
+  var modal = document.getElementById('saved-modal');
+  if (modal) modal.classList.add('hidden');
+}
+
+function copySavedModal() {
+  if (!histCurrentItem) return;
+  var text = (histCurrentItem.content || '').replace(/<[^>]+>/g,'').replace(/&nbsp;/g,' ').trim();
+  navigator.clipboard.writeText(text).then(function(){ showToast('Copied to clipboard!'); });
+}
+
+function reuseFromHistory() {
+  if (!histCurrentItem) return;
+  closeSavedModal();
+  var app = histCurrentItem.app;
+  var data = histCurrentItem.inputData || {};
+  switchScreen(app);
+  // Pre-fill form fields
+  setTimeout(function() {
+    Object.keys(data).forEach(function(key) {
+      var el = document.getElementById(key);
+      if (el) el.value = data[key];
+    });
+    showToast('Fields pre-filled from history! Hit generate to reuse ↺');
+  }, 400);
+}
+
+function histReuse(id) {
+  var all = histGetAll();
+  var item = all.find(function(h){ return h.id === id; });
+  if (!item) return;
+  histCurrentItem = item;
+  reuseFromHistory();
+}
+
+function histDelete(id) {
+  var all = histGetAll().filter(function(h){ return h.id !== id; });
+  localStorage.setItem(HIST_KEY, JSON.stringify(all));
+  histUpdateCount();
+  histRender();
+  showToast('Deleted from history');
+}
+
+function histClearAll() {
+  if (!confirm('Clear all history? This cannot be undone.')) return;
+  localStorage.removeItem(HIST_KEY);
+  histUpdateCount();
+  histRender();
+  showToast('History cleared');
+}
 
 /* ══════════════════════════════════════════
    NAVIGATION — defined in admin section below
@@ -1346,6 +1795,13 @@ function updateBar(app) {
     if (freeNote) freeNote.innerHTML = 'Pro plan active — <em>Unlimited</em>';
     disableAppBtn(app, false); return;
   }
+  // Show pending badge if payment was submitted but not verified yet
+  var pending = localStorage.getItem('hub_pending_txn_' + app);
+  if (pending && planLabel) {
+    planLabel.textContent = '⏱ PENDING';
+    planLabel.style.color = '#f59e0b';
+    if (freeNote) freeNote.innerHTML = 'Payment pending verification — <em>activates within 1-2 hrs</em>';
+  }
   if (used) used.textContent = c;
   if (limit) limit.textContent = lim;
   if (fill) { fill.style.width = pct + '%'; fill.className = 's-ub-fill ' + app + '-fill' + (c >= lim ? ' full' : c >= lim-2 ? ' warn' : ''); }
@@ -1407,11 +1863,86 @@ function closeUpgrade(){ hideOverlay('upgrade-overlay'); }
 function doUpgrade() {
   var cfg = upgradeConfigs[currentUpgradeApp];
   var email = localStorage.getItem('hub_email') || 'unknown';
-  fetch(SHEET,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'payment_attempt',email:email,app:currentUpgradeApp,time:new Date().toLocaleString()})}).catch(function(){});
-  window.location.href = cfg.upi;
-  setTimeout(function(){ showToast('Pay ' + cfg.price + ' to aliarsad@fam — then contact us to activate!'); }, 1500);
+  // Log payment attempt
+  fetch(SHEET,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'payment_attempt',email:email,app:currentUpgradeApp,amount:cfg.price,time:new Date().toLocaleString()})}).catch(function(){});
   closeUpgrade();
+  // Show payment verification modal
+  document.getElementById('pay-verify-sub').textContent = 'Pay ' + cfg.price + '/month to activate ' + cfg.title;
+  document.getElementById('pay-verify-amount').textContent = cfg.price;
+  localStorage.setItem('hub_pending_upgrade_app', currentUpgradeApp);
+  localStorage.setItem('hub_pending_upgrade_price', cfg.price);
+  document.getElementById('pay-verify-overlay').classList.remove('hidden');
 }
+
+function copyUPI() {
+  navigator.clipboard.writeText('aliarsad@fam').then(function(){
+    showToast('UPI ID copied! Open GPay / PhonePe / Paytm to pay 💚');
+  });
+}
+
+function closePayVerify() {
+  document.getElementById('pay-verify-overlay').classList.add('hidden');
+  document.getElementById('pay-txn-id').value = '';
+  document.getElementById('pay-txn-name').value = '';
+}
+
+async function submitPayment() {
+  var txnId = document.getElementById('pay-txn-id').value.trim();
+  var name = document.getElementById('pay-txn-name').value.trim();
+  var email = localStorage.getItem('hub_email') || '';
+  var app = localStorage.getItem('hub_pending_upgrade_app') || currentUpgradeApp;
+  var price = localStorage.getItem('hub_pending_upgrade_price') || '';
+
+  if (!txnId || txnId.length < 6) {
+    showToast('Please enter a valid Transaction ID!');
+    document.getElementById('pay-txn-id').style.borderColor = 'var(--red)';
+    setTimeout(function(){ document.getElementById('pay-txn-id').style.borderColor = ''; }, 2000);
+    return;
+  }
+  if (!email) {
+    showToast('Please sign up with your email first!');
+    return;
+  }
+
+  var btn = document.getElementById('pay-submit-btn');
+  btn.disabled = true;
+  btn.textContent = 'Submitting...';
+
+  // Save payment to Google Sheet
+  try {
+    await fetch(SHEET, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        type: 'payment_submitted',
+        email: email,
+        name: name || localStorage.getItem('hub_name') || 'Unknown',
+        app: app,
+        amount: price,
+        txnId: txnId,
+        status: 'PENDING_VERIFICATION',
+        time: new Date().toLocaleString('en-IN'),
+        device: navigator.userAgent.substring(0, 60)
+      })
+    });
+  } catch(e) {}
+
+  // Save pending payment locally
+  localStorage.setItem('hub_pending_txn_' + app, JSON.stringify({
+    txnId: txnId, app: app, price: price, submittedAt: new Date().toISOString()
+  }));
+
+  btn.disabled = false;
+  btn.textContent = '✅ Submit & Verify Payment';
+  closePayVerify();
+
+  showToast('Payment submitted! We will verify within 1-2 hours ⏱');
+  setTimeout(function(){
+    showToast('Pro will activate automatically after verification ✅');
+  }, 3500);
+}
+
 
 /* ══════════════════════════════════════════
    STYLEAI LOGIC
@@ -1438,9 +1969,9 @@ var scentSearchMode = 'exact';
 var activeShops = { amazon: true, flipkart: true, myntra: false, meesho: false, ajio: false, nykaa: false };
 
 var shopUrls = {
-  amazon:   function(q){ return 'https://www.amazon.in/s?k=' + encodeURIComponent(q); },
-  flipkart: function(q){ return 'https://www.flipkart.com/search?q=' + encodeURIComponent(q); },
-  myntra:   function(q){ return 'https://www.myntra.com/' + q.toLowerCase().replace(/ /g,'-'); },
+  amazon:   function(q){ return 'https://www.amazon.in/s?k=' + encodeURIComponent(q) + '&i=apparel'; },
+  flipkart: function(q){ return 'https://www.flipkart.com/search?q=' + encodeURIComponent(q) + '&otracker=search'; },
+  myntra:   function(q){ return 'https://www.myntra.com/' + q.toLowerCase().replace(/[^a-z0-9 ]/g,'').trim().replace(/ +/g,'-') + '?rawQuery=' + encodeURIComponent(q); },
   meesho:   function(q){ return 'https://www.meesho.com/search?q=' + encodeURIComponent(q); },
   ajio:     function(q){ return 'https://www.ajio.com/search/?text=' + encodeURIComponent(q); },
   nykaa:    function(q){ return 'https://www.nykaafashion.com/search?q=' + encodeURIComponent(q); }
@@ -1455,11 +1986,89 @@ var shopLogos = {
   nykaa:    { bg:'#ff6347', color:'#fff', label:'Nykaa',   char:'N' }
 };
 
+function copyItemName(btn) {
+  var name = btn.getAttribute('data-name');
+  navigator.clipboard.writeText(name).then(function(){
+    showToast('Name copied! Paste in any store search 🔍');
+    btn.textContent = '✓ Copied!';
+    setTimeout(function(){ btn.textContent = '📋 Copy Name'; }, 2000);
+  });
+}
+
 function toggleShop(shop, btn) {
   activeShops[shop] = !activeShops[shop];
   btn.classList.toggle('on', activeShops[shop]);
   var anyOn = Object.values(activeShops).some(function(v){ return v; });
   if (!anyOn) { activeShops[shop] = true; btn.classList.add('on'); showToast('Keep at least one shop selected!'); }
+}
+
+function buildItemCard(item, icon, gender, style) {
+  var cat = item.category || 'Top';
+
+  // Unsplash keyword by category + style
+  var catKw = {Top:'fashion shirt outfit',Bottom:'fashion pants outfit',Shoes:'fashion shoes sneakers',Accessory:'fashion accessories',Dress:'fashion dress outfit',Outerwear:'fashion jacket outfit',Bag:'fashion bag',Hat:'fashion hat cap'};
+  var kw = catKw[cat] || 'fashion outfit';
+  if (style) {
+    if (style.indexOf('GenZ') > -1 || style.indexOf('Baggy') > -1) kw += ' oversized streetwear';
+    else if (style.indexOf('Y2K') > -1) kw += ' y2k fashion';
+    else if (style.indexOf('Hypebeast') > -1) kw += ' streetwear hypebeast';
+    else if (style.indexOf('Formal') > -1) kw += ' formal business';
+    else if (style.indexOf('Ethnic') > -1) kw += ' indian ethnic kurta';
+    else if (style.indexOf('Sporty') > -1) kw += ' sport athletic';
+    else if (style.indexOf('Dark Academia') > -1) kw += ' dark academia';
+    else if (style.indexOf('Soft') > -1) kw += ' pastel soft aesthetic';
+  }
+  if (gender === 'Male') kw += ' men'; else if (gender === 'Female') kw += ' women';
+
+  var sig = Math.floor(Math.random() * 9999);
+  // Curated Unsplash fashion photo IDs per category - reliable and always fashion
+  var fashionPhotos = {
+    'Top':    ['photo-1521572163474-6864f9cf17ab','photo-1503341455253-b2e723bb3dbb','photo-1618354691792-d1d42acfd860','photo-1583743814966-8936f5b7be1a','photo-1556821840-3a63f95609a7'],
+    'Bottom': ['photo-1542272604-787c3835535d','photo-1624378439575-d8705ad7ae80','photo-1541099649105-f69ad21f3246','photo-1473966968600-fa801b869a1a','photo-1565084888279-aca607ecce0c'],
+    'Shoes':  ['photo-1542291026-7eec264c27ff','photo-1608231387042-66d1773070a5','photo-1600185365483-26d7a4cc7519','photo-1491553895911-0055eca6402d','photo-1460353581641-37baddab0fa2'],
+    'Accessory':['photo-1523170335258-f5ed11844a49','photo-1524592094714-0f0654e20314','photo-1611591437281-460bfbe1220a','photo-1572635196237-14b3f281503f','photo-1548036328-c9fa89d128fa'],
+    'Dress':  ['photo-1572804013309-59a88b7e92f1','photo-1496747611176-843222e1e57c','photo-1539109136881-3be0616acf4b','photo-1515886657613-9f3515b0c78f','photo-1566174053879-31528523f8ae'],
+    'Outerwear':['photo-1551488831-00ddcb6c6bd3','photo-1548126032-079a0fb0099d','photo-1591047139829-d91aecb6caea','photo-1539533018447-63fcce2678e3','photo-1467043153537-a4fba2cd39ef'],
+    'Bag':    ['photo-1548036328-c9fa89d128fa','photo-1566150905458-1bf1fc113f0d','photo-1584917865442-de89df76afd3','photo-1590874103328-eac38a683ce7','photo-1575032617751-6ddec2089882'],
+    'Hat':    ['photo-1556306535-0f09a537f0a3','photo-1521369909029-2afed882baee','photo-1529958030586-3aae4ca485ff','photo-1588850561407-ed78c282e89b','photo-1534215754734-18e55d13e346']
+  };
+  var photoArr = fashionPhotos[cat] || fashionPhotos['Top'];
+  // Rotate through photos based on item name hash so same item always gets same photo
+  var nameHash = 0;
+  for (var ci = 0; ci < item.name.length; ci++) nameHash += item.name.charCodeAt(ci);
+  var photoId = photoArr[nameHash % photoArr.length];
+  var imgSrc = 'https://images.unsplash.com/' + photoId + '?w=180&h=220&fit=crop&crop=center&auto=format';
+  var shopUrl = 'https://www.google.com/search?q=' + encodeURIComponent(item.brand + ' ' + item.name) + '&tbm=shop';
+
+  // Get colour from item name for tinted border
+  var colourMap = {'black':'#1a1a1a','white':'#f5f5f5','grey':'#888','gray':'#888','navy':'#001f5b','blue':'#1a56db','red':'#e02424','green':'#057a55','yellow':'#e3a008','pink':'#e74694','beige':'#d4b896','brown':'#723b13','orange':'#ff5a1f','purple':'#7e3af2','cream':'#f5f0e8','khaki':'#8b8000','olive':'#6b7280'};
+  var itemNameLower = item.name.toLowerCase();
+  var itemColour = '';
+  Object.keys(colourMap).forEach(function(c){ if(itemNameLower.indexOf(c)>-1 && !itemColour) itemColour = colourMap[c]; });
+  var colourBorder = itemColour ? 'border-color:' + itemColour + '40;box-shadow:0 0 0 2px ' + itemColour + '20;' : '';
+
+  var imgWrap = '<a href="' + shopUrl + '" target="_blank" class="item-img-wrap" title="Search on Google Shopping" style="' + colourBorder + '">'
+    + '<div class="item-img-loading">' + icon + '</div>'
+    + '<img src="' + imgSrc + '" alt="' + cat + '" style="width:100%;height:100%;object-fit:cover;animation:imgfade 0.5s ease;" loading="lazy">'
+    + '<div class="item-img-badge" style="' + (itemColour ? 'background:' + itemColour + 'cc;' : '') + '">Google Shop</div>'
+    + '</a>';
+
+  var copyBtn = '<button onclick="copyItemName(this)" data-name="' + item.name.replace(/"/g,'&quot;') + '" style="padding:4px 10px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:6px;font-size:11px;color:var(--muted2);cursor:pointer;white-space:nowrap;font-family:DM Sans,sans-serif;">📋 Copy Name</button>';
+
+  return '<div class="breakdown-row">'
+    + imgWrap
+    + '<div style="flex:1;min-width:0;">'
+    + '<div class="breakdown-label">' + cat + '</div>'
+    + '<div class="breakdown-item-name">' + item.name + '</div>'
+    + (item.why ? '<div class="breakdown-item-why">' + item.why + '</div>' : '')
+    + '<div class="breakdown-item-price">~\u20b9' + Number(item.price||0).toLocaleString('en-IN') + ' \u00b7 ' + item.brand + ' <span style="color:rgba(255,255,255,0.2);font-size:10px;">(prices vary on store)</span></div>'
+    + '<div style="font-size:11px;color:var(--muted2);margin:5px 0 6px;font-family:Space Mono,monospace;">\uD83D\uDD0D Find in store:</div>'
+    + '<div class="breakdown-item-links">'
+    + buildShopLinks(item.name, item.brand, item.amazon_search, gender)
+    + copyBtn
+    + '</div>'
+    + '</div>'
+    + '</div>';
 }
 
 function setStyleMode(mode) {
@@ -1482,18 +2091,46 @@ function setScentMode(mode) {
     : 'Broad: searches by brand — always finds results even if product is unavailable';
 }
 
+// Brands that are ONLY on Myntra/AJIO, not Amazon India
+var myntraOnlyBrands = ['h&m','hm','zara','bershka','mango','pull&bear','stradivarius','massimo dutti','cos','arket','weekday','& other stories'];
+var ajioOnlyBrands = ['jack and jones','only','vero moda','replay','tommy hilfiger','calvin klein','levis'];
+
 function buildShopLinks(itemName, brandName, searchQuery, gender) {
-  var exactQ = searchQuery || itemName;
-  var broadQ = (brandName || '') + ' ' + (gender || '');
-  var q = styleSearchMode === 'exact' ? exactQ : broadQ.trim();
+  var brand = (brandName||'').toLowerCase().trim();
+  var words = itemName.split(' ');
+
+  // Remove brand from item name words to avoid duplication like "H&M H&M Oversized"
+  var brandWords = brand.split(' ');
+  var skip = ['men','women','male','female','mens','womens','man','woman','unisex','fit','india','cotton','polyester','regular','slim','the','a','an','and','for','with'];
+  var keyWords = words.filter(function(w){
+    var wl = w.toLowerCase();
+    return w.length > 2 && !skip.includes(wl) && !brandWords.includes(wl);
+  }).slice(0,3);
+
+  // Build clean query: brand once + key words only
+  var smartQ = brandName + ' ' + keyWords.join(' ');
+  var broadQ = brandName + ' ' + (keyWords[0]||'');
+  var q = styleSearchMode === 'broad' ? broadQ.trim() : smartQ.trim();
+
+  // Smart store routing — some brands only exist on specific platforms
+  var isMyntraOnly = myntraOnlyBrands.some(function(b){ return brand.includes(b); });
+  var isAjioOnly = ajioOnlyBrands.some(function(b){ return brand.includes(b); });
+
   var links = '';
   Object.keys(activeShops).forEach(function(shop) {
     if (!activeShops[shop]) return;
+    // Skip Amazon for Myntra-only brands and show a note
+    if (shop === 'amazon' && isMyntraOnly) {
+      links += '<span class="bl" style="opacity:0.4;cursor:default;" title="' + brandName + ' is not sold on Amazon India">Not on Amazon</span>';
+      return;
+    }
+    // Highlight Myntra for Myntra-only brands
     var logo = shopLogos[shop];
     var url = shopUrls[shop](q);
-    links += '<a class="bl" href="' + url + '" target="_blank">'
+    var highlight = (isMyntraOnly && shop === 'myntra') || (isAjioOnly && shop === 'ajio') ? 'border-color:var(--green);color:var(--green);' : '';
+    links += '<a class="bl" href="' + url + '" target="_blank" style="' + highlight + '">'
       + '<span class="bl-logo" style="background:' + logo.bg + ';color:' + logo.color + ';">' + logo.char + '</span>'
-      + logo.label + '</a>';
+      + logo.label + (highlight ? ' ✓' : '') + '</a>';
   });
   return links || '<span style="font-size:12px;color:var(--muted2);">Select a shop above</span>';
 }
@@ -1531,6 +2168,8 @@ async function styleGo() {
   var colorPref = document.getElementById('style-color').value.trim();
   var brands = document.getElementById('style-brands').value.trim();
   var extra = document.getElementById('style-extra').value.trim();
+  var fitPref = document.getElementById('style-fit') ? document.getElementById('style-fit').value : '';
+  var outfitCount = document.getElementById('style-count') ? parseInt(document.getElementById('style-count').value) || 3 : 3;
   var btn = document.getElementById('style-gen-btn');
   btn.disabled = true; btn.textContent = 'Generating...';
   document.getElementById('style-loading').classList.add('show');
@@ -1541,14 +2180,37 @@ async function styleGo() {
     : gender === 'Female'
     ? 'GENDER=FEMALE. ONLY womens items. FORBIDDEN: mens shirt,mens jeans,mens shoes,mens anything.'
     : 'GENDER=UNISEX. Gender-neutral items only.';
-  var priceGuide = 'REALISTIC 2024 INDIA PRICES: T-shirt Rs.299-799, Shirt Rs.499-1499, Jeans Rs.799-2499, Trousers Rs.599-1999, Kurta Rs.399-1499, Sneakers Rs.999-3999, Formal shoes Rs.799-2999, Sandals Rs.399-1499, Heels Rs.599-2499, Watch Rs.599-2999, Belt Rs.299-799, Bag Rs.499-1999, Sunglasses Rs.299-999, Cap Rs.199-599, Dress Rs.599-2499, Kurti Rs.399-1299. NEVER use prices below Rs.199 for any clothing item.';
+  var priceGuide = 'REAL AMAZON INDIA PRICES 2024 - use these exact ranges: ' +
+    'Basic T-shirt (Roadster/HRX) Rs.399-699 | Graphic Oversized T-shirt Rs.599-1299 | Casual Shirt Rs.599-1299 | ' +
+    'Formal Shirt (Peter England/Van Heusen) Rs.799-1799 | ' +
+    'Regular Jeans Rs.999-1999 | Baggy/Cargo Pants Rs.999-2499 | Formal Trousers Rs.799-1599 | ' +
+    'Casual Sneakers (Puma/Adidas/Campus) Rs.1499-3499 | Nike/Adidas Sneakers Rs.2999-6999 | ' +
+    'Formal Shoes Rs.999-2499 | Sandals/Slippers Rs.399-999 | ' +
+    'Watch (Fastrack/Titan) Rs.999-2999 | Belt Rs.299-699 | Sunglasses Rs.399-999 | ' +
+    'Cap/Beanie Rs.299-699 | Backpack/Bag Rs.799-2499 | ' +
+    'Kurti (Libas/FabIndia) Rs.499-1299 | Ethnic Set Rs.999-2499 | Dress Rs.799-2499. ' +
+    'IMPORTANT: Prices on Amazon are often 20-50% HIGHER than you might expect due to platform fees. ' +
+    'Always give prices on the HIGHER end of these ranges to be accurate. ' +
+    'If budget is Rs.' + budget + ' total, each of 4 items should be roughly Rs.' + Math.floor(parseInt(budget)/4) + ' - stay realistic.';
   var genZGuide = '';
-  var genZStyles = {'GenZ Baggy':'GEN Z BAGGY: ONLY oversized/baggy fits. Baggy cargo pants or wide-leg jeans, oversized hoodie or graphic tee (2 sizes up), chunky sneakers (Nike Air Max, New Balance, Puma). Accessories: chains, crossbody bag, beanie. Brands: H&M, Bershka, Roadster Oversized, HRX, Champion, Fila.','Y2K':'Y2K 2000s: Low-rise jeans, crop tops, butterfly clips, platform shoes, metallic/rhinestone accessories, baby tees. Brands: Zara, H&M, Bershka, Forever 21.','Streetwear Hypebeast':'HYPEBEAST: Graphic hoodies, joggers, statement sneakers (Nike/Jordan/Adidas), caps, crossbody bags, oversized logo tees. Layer pieces. Brands: Nike, Adidas, Puma, HRX.','Soft Aesthetic':'SOFT AESTHETIC: Pastels only — flowy dresses, knit cardigans, mom jeans, white sneakers, tote bags, floral prints. Brands: Libas, FabIndia, Westside, Global Desi.','Dark Academia':'DARK ACADEMIA: Browns, blacks, burgundy, forest green — blazers, turtlenecks, wide-leg trousers, loafers. Brands: Peter England, Van Heusen, AND, Marks & Spencer.','E-Boy E-Girl':'E-BOY/E-GIRL: Striped long-sleeve under graphic tee, black jeans, chains, chunky boots, edgy dark accessories with colour pops. Brands: H&M, Zara, Bershka.','Gorpcore Outdoorsy':'GORPCORE: Functional fashion — fleece jacket, cargo pants, trail sneakers or hiking boots, puffer vest, beanie, technical backpack. Brands: HRX, Decathlon, Wildcraft, Puma Outdoor.'};
+  var genZStyles = {'GenZ Baggy':'GEN Z BAGGY: ONLY oversized/baggy fits. Baggy cargo pants or wide-leg jeans, oversized hoodie or graphic tee (2 sizes up), chunky sneakers (Nike Air Max, New Balance, Puma). Accessories: chains, crossbody bag, beanie. Brands: H&M, Bershka, Roadster Oversized, HRX, Champion, Fila.','Y2K':'Y2K 2000s: Low-rise jeans, crop tops, butterfly clips, platform shoes, metallic/rhinestone accessories, baby tees. Brands: Zara, H&M, Bershka, Forever 21.','Streetwear Hypebeast':'HYPEBEAST: Graphic hoodies, joggers, statement sneakers (Nike/Jordan/Adidas), caps, crossbody bags, oversized logo tees. Layer pieces. Brands: Nike, Adidas, Puma, HRX.','Soft Aesthetic':'SOFT AESTHETIC: Pastels only — flowy dresses, knit cardigans, mom jeans, white sneakers, tote bags, floral prints. Brands: Libas, FabIndia, Westside, Global Desi.','Dark Academia':'DARK ACADEMIA: Browns, blacks, burgundy, forest green — blazers, turtlenecks, wide-leg trousers, loafers. Brands: Peter England, Van Heusen, AND, Marks & Spencer.','E-Boy E-Girl':'E-BOY/E-GIRL: Striped long-sleeve under graphic tee, black jeans, chains, chunky boots, edgy dark accessories with colour pops. Brands: H&M, Zara, Bershka.','Gorpcore Outdoorsy':'GORPCORE: Functional fashion — fleece jacket, cargo pants, trail sneakers or hiking boots, puffer vest, beanie, technical backpack. Brands: HRX, Decathlon, Wildcraft, Puma Outdoor.',
+    'Clean Quiet Luxury':'QUIET LUXURY / CLEAN GIRL: Neutral tones (beige, cream, white, camel, grey), tailored fits, minimal logos, quality fabrics. Linen trousers, cashmere-look tops, loafers, leather bag, gold jewellery. Elevated basics. Brands: Marks & Spencer, AND, Massimo Dutti, Zara.',
+    'Old Money':'OLD MONEY: Classic timeless pieces — polo shirts, cable knit sweaters, chinos or pleated trousers, loafers or boat shoes, minimal accessories. Earth tones, navy, white. Brands: Ralph Lauren, Tommy Hilfiger, Peter England Premium, Van Heusen.',
+    'Mob Wife':'MOB WIFE / MAXIMALIST: Bold and luxurious — faux fur coats, animal print, bodycon dresses, stilettos or platform heels, gold jewellery, oversized sunglasses. Dark rich tones. Brands: Zara, H&M Premium, Mango.',
+    'Coconut Girl':'COCONUT GIRL / COASTAL: Sun-kissed beach vibes — crochet tops, linen shorts, flowy dresses, sandals, shell jewellery, tote bags, natural textures. Sandy and warm tones.',
+    'Tomboy Core':'TOMBOY CORE: Masculine silhouettes on feminine body — oversized blazers, straight-leg jeans, graphic tees, loafers, chunky boots, dad caps. Neutral and earthy tones.',
+    'Coquette':'COQUETTE / FEMININE: Ultra-feminine — lace details, satin fabrics, corset tops, mini skirts, ballet flats, bows and ribbons, soft pink and white tones.',
+    'Indo Western':'INDO WESTERN FUSION: Mix traditional Indian pieces with modern western styling — kurta with jeans, dhoti pants with crop top, saree with belt, ethnic jacket over western outfit.',
+    'Desi Streetwear':'DESI STREETWEAR: Indian street culture meets streetwear — graphic tees with Hindi/Urdu prints, cargo pants, chunky sneakers, bucket hats, ethnic patterns on streetwear silhouettes.',
+    'Royal Ethnic':'ROYAL ETHNIC: Heritage and regal Indian fashion — heavy embroidery, silk fabrics, kurta-sherwani sets, lehenga, zardozi work, royal colors (maroon, gold, navy). Brands: FabIndia Premium, Manyavar, Sabyasachi-inspired.',
+    'Preppy':'PREPPY: Classic collegiate — polo shirts, chinos, button-downs, blazers, loafers, plaid patterns, varsity jackets, argyle. Clean and structured. Brands: Tommy Hilfiger, Lacoste, Ralph Lauren.',
+    'Smart Casual':'SMART CASUAL: Polished but relaxed — chinos or dark jeans, neat shirt or polo, clean sneakers or loafers, minimal accessories. Professional but comfortable.',
+    'Business Casual':'BUSINESS CASUAL: Office-appropriate without being fully formal — dress trousers or chinos, collared shirt or blouse, blazer optional, formal shoes or smart sneakers.'};
   if (style && genZStyles[style]) { genZGuide = 'MANDATORY STYLE RULE - ' + genZStyles[style]; }
   var sys = 'You are a JSON-only Indian fashion stylist with deep knowledge of Gen Z fashion trends and real prices on Amazon.in and Flipkart. ' + genderRule + (genZGuide ? ' ' + genZGuide : '') + ' SPECIFICITY: Every item name MUST be specific e.g. "Roadster Men Oversized Baggy Fit Washed Black Cargo Pants" NOT "Cargo Pants". Format: Brand + Gender + Fit/Style + Type + Color. ' + priceGuide + ' TOTAL of all 4 items MUST stay within Rs.' + budget + '. JSON only. No markdown.';
-  var usr = 'Generate 3 complete outfits. Gender:'+gender+', Occasion:'+occasion+', Style:'+(style||'Casual')+', Weather:'+(weather||'Mild')+', TOTAL BUDGET: Rs.'+budget+' for all 4 items combined, BodyType:'+(bodytype||'Average')+', TopSize:'+(topSz||'M')+', BottomSize:'+(botSz||'32')+', ShoeSize:'+(shoeSz||'8')+', Colors:'+(colorPref||'any')+', Brands:'+(brands||'any')+', Notes:'+(extra||'none')+'. IMPORTANT: Use real Indian market prices. T-shirt = Rs.399-799, not Rs.50. Total of all items must be within Rs.'+budget+'.\nJSON: {\"outfits\":[{\"name\":\"x\",\"description\":\"x\",\"vibe_tags\":[\"x\"],\"match_score\":90,\"style_tip\":\"x\",\"items\":[{\"category\":\"Top\",\"name\":\"SPECIFIC NAME\",\"brand\":\"x\",\"price\":599,\"why\":\"x\",\"amazon_search\":\"x\",\"flipkart_search\":\"x\",\"google_image_search\":\"x\"},{\"category\":\"Bottom\",\"name\":\"SPECIFIC NAME\",\"brand\":\"x\",\"price\":899,\"why\":\"x\",\"amazon_search\":\"x\",\"flipkart_search\":\"x\",\"google_image_search\":\"x\"},{\"category\":\"Shoes\",\"name\":\"SPECIFIC NAME\",\"brand\":\"x\",\"price\":1299,\"why\":\"x\",\"amazon_search\":\"x\",\"flipkart_search\":\"x\",\"google_image_search\":\"x\"},{\"category\":\"Accessory\",\"name\":\"SPECIFIC NAME\",\"brand\":\"x\",\"price\":399,\"why\":\"x\",\"amazon_search\":\"x\",\"flipkart_search\":\"x\",\"google_image_search\":\"x\"}]}]}';
+  var usr = 'Generate 3 complete outfits. Gender:'+gender+', Occasion:'+occasion+', Style:'+(style||'Casual')+', Weather:'+(weather||'Mild')+', TOTAL BUDGET: Rs.'+budget+' for all 4 items combined, BodyType:'+(bodytype||'Average')+', TopSize:'+(topSz||'M')+', BottomSize:'+(botSz||'32')+', ShoeSize:'+(shoeSz||'8')+', Colors:'+(colorPref||'any')+', Brands:'+(brands||'any')+', Fit:'+(fitPref||'any')+', Notes:'+(extra||'none')+'. Generate exactly ' + outfitCount + ' outfits. IMPORTANT: Use real Indian market prices. T-shirt = Rs.399-799, not Rs.50. Total of all items must be within Rs.'+budget+'.\nJSON: {\"outfits\":[{\"name\":\"x\",\"description\":\"x\",\"vibe_tags\":[\"x\"],\"match_score\":90,\"style_tip\":\"x\",\"items\":[{\"category\":\"Top\",\"name\":\"SPECIFIC NAME\",\"brand\":\"x\",\"price\":599,\"why\":\"x\",\"amazon_search\":\"x\",\"flipkart_search\":\"x\",\"google_image_search\":\"x\"},{\"category\":\"Bottom\",\"name\":\"SPECIFIC NAME\",\"brand\":\"x\",\"price\":899,\"why\":\"x\",\"amazon_search\":\"x\",\"flipkart_search\":\"x\",\"google_image_search\":\"x\"},{\"category\":\"Shoes\",\"name\":\"SPECIFIC NAME\",\"brand\":\"x\",\"price\":1299,\"why\":\"x\",\"amazon_search\":\"x\",\"flipkart_search\":\"x\",\"google_image_search\":\"x\"},{\"category\":\"Accessory\",\"name\":\"SPECIFIC NAME\",\"brand\":\"x\",\"price\":399,\"why\":\"x\",\"amazon_search\":\"x\",\"flipkart_search\":\"x\",\"google_image_search\":\"x\"}]}]}';
   try {
-    var res = await fetch('https://api.groq.com/openai/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+GROQ_KEY},body:JSON.stringify({model:MODEL,max_tokens:2500,temperature:0.3,messages:[{role:'system',content:sys},{role:'user',content:usr}]})});
+    var res = await fetch('https://api.groq.com/openai/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+GROQ_KEY},body:JSON.stringify({model:MODEL,max_tokens: outfitCount >= 5 ? 4000 : 2500,temperature:0.3,messages:[{role:'system',content:sys},{role:'user',content:usr}]})});
     if (!res.ok) { var ed = await res.json(); throw new Error(ed.error ? ed.error.message : 'API error'); }
     var data = await res.json();
     var raw = data.choices[0].message.content || '';
@@ -1560,7 +2222,20 @@ async function styleGo() {
     if (!parsed.outfits || !parsed.outfits.length) throw new Error('No outfits generated. Try again.');
     document.getElementById('style-loading').classList.remove('show');
     bumpCount('style');
-    styleRender(parsed.outfits, gender, occasion, style, budgetNum);
+    styleRender(parsed.outfits, gender, occasion, style, budgetNum, outfitCount);
+    // Save to history
+    var styleTitle = occasion + ' Outfit — ' + (style||'Casual');
+    var styleTags = [gender, occasion, style||'Casual', 'Budget ₹'+budget].filter(Boolean);
+    var styleContent = '<div style="font-size:13px;line-height:1.8;color:var(--text);">' + parsed.outfits.map(function(o,i){
+      var items = (o.items||[]).map(function(item){ return '<div style="padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.05);"><strong>'+item.category+':</strong> '+item.name+' ('+item.brand+') — ~₹'+(item.price||0)+'</div>'; }).join('');
+      return '<div style="margin-bottom:16px;padding:12px;background:rgba(255,255,255,0.03);border-radius:10px;border-left:3px solid var(--pink);"><strong style="color:var(--pink2);">Outfit '+(i+1)+': '+o.name+'</strong><br/><small style="color:var(--muted2);">'+o.description+'</small><div style="margin-top:8px;">'+items+'</div></div>';
+    }).join('') + '</div>';
+    var styleInput = {
+      'style-budget': budget, 'style-gender': gender, 'style-occasion': occasion,
+      'style-style': style, 'style-weather': weather||'', 'style-bodytype': bodytype||'',
+      'style-color': colorPref||'', 'style-brands': brands||''
+    };
+    histSave('style', styleTitle, gender + ' · ' + (style||'Casual'), styleTags, styleContent, styleInput);
     fetch(SHEET,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'generation',email:localStorage.getItem('hub_email')||'anonymous',app:'StyleAI',budget:budget,gender:gender,occasion:occasion,time:new Date().toLocaleString()})}).catch(function(){});
   } catch(err) {
     document.getElementById('style-loading').classList.remove('show');
@@ -1570,7 +2245,7 @@ async function styleGo() {
   updateBar('style');
 }
 
-function styleRender(outfits, gender, occasion, style, budgetNum) {
+function styleRender(outfits, gender, occasion, style, budgetNum, outfitCount) {
   var c = document.getElementById('style-results');
   c.innerHTML = '<div class="result-lbl">' + outfits.length + ' Outfits Styled ✦</div>';
   var catIcons = {'Top':'👕','Bottom':'👖','Shoes':'👟','Accessory':'💍','Dress':'👗','Outerwear':'🧥','Bag':'👜','Hat':'🧢'};
@@ -1585,7 +2260,12 @@ function styleRender(outfits, gender, occasion, style, budgetNum) {
     var score = o.match_score || (Math.floor(Math.random()*10)+88);
     var rows = o.items.map(function(item) {
       var icon = catIcons[item.category] || '🛍️';
-      return '<div class="breakdown-row"><div class="breakdown-icon">'+icon+'</div><div class="breakdown-label">'+(item.category||'Item')+'</div><div class="breakdown-content"><div class="breakdown-item-name">'+item.name+'</div>'+(item.why?'<div class="breakdown-item-why">'+item.why+'</div>':'')+'<div class="breakdown-item-price">Est. ₹'+Number(item.price||0).toLocaleString('en-IN')+' · '+item.brand+'</div><div class="breakdown-item-links"><a class="bl bl-img" href="'+googleImgUrl(item.google_image_search||item.name)+'" target="_blank">📷 Photos</a>'+buildShopLinks(item.name,item.brand,item.amazon_search,gender)+'</div></div></div>';
+      var itemSearchName = item.name + ' ' + item.brand;
+      var copyNameBtn = '<button onclick="copyItemName(this)" data-name="'+item.name.replace(/"/g,'&quot;')+'" style="padding:4px 10px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:6px;font-size:11px;color:var(--muted2);cursor:pointer;font-family:DM Sans,sans-serif;white-space:nowrap;">📋 Copy Name</button>';
+      var imgId = 'img-' + Math.random().toString(36).substr(2,8);
+      // Build Unsplash keyword from item category + style
+      var itemCard = buildItemCard(item, icon, gender, style);
+      return itemCard;
     }).join('');
     var vibeHtml = (o.vibe_tags||[]).map(function(t){ return '<span class="vtag">'+t+'</span>'; }).join('');
     var copyText = 'Outfit '+(i+1)+': '+o.name+'\n'+o.description+'\n\n';
@@ -1680,6 +2360,11 @@ async function restGenerate(tool, btn) {
     if (spin) spin.classList.remove('show');
     if (out) out.textContent = data.choices[0].message.content;
     bumpCount('rest');
+    // Save to history
+    var restTitle = { ig:'Instagram Post', mn:'Menu Description', rv:'Review Reply', mk:'Marketing Ideas' }[tool] || 'Restaurant Content';
+    var restContent = '<div style="font-size:13.5px;line-height:1.9;color:var(--text);white-space:pre-wrap;padding:8px 0;">' + (data.choices[0].message.content||'') + '</div>';
+    var restTags = [restTitle, tool];
+    histSave('rest', restTitle, new Date().toLocaleDateString('en-IN'), restTags, restContent, {});
     fetch(SHEET,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'generation',email:localStorage.getItem('hub_email')||'anonymous',app:'RestaurantAI',tool:tool,time:new Date().toLocaleString()})}).catch(function(){});
   } catch(err) {
     if (spin) spin.classList.remove('show');
@@ -1725,6 +2410,16 @@ async function scentFind() {
     if (!parsed.dupes || !parsed.dupes.length) throw new Error('No dupes found. Try a more specific name like "Dior Sauvage EDT".');
     document.getElementById('scent-loading').classList.remove('show');
     bumpCount('scent');
+    // Save to history
+    var scentTitle = 'Dupes for ' + name;
+    var scentDupeContent = '<div>' + parsed.dupes.map(function(d,i){
+      return '<div style="margin-bottom:12px;padding:12px;background:rgba(201,168,76,0.06);border-radius:10px;border-left:3px solid var(--gold);">'
+        + '<strong style="color:var(--gold2);">#'+(i+1)+' '+d.name+'</strong><br/>'
+        + '<small style="color:var(--muted2);">'+d.brand+' · '+d.price+' · '+d.match_score+'% match</small><br/>'
+        + '<small style="color:var(--muted2);">'+d.scent_similarity+'</small></div>';
+    }).join('') + '</div>';
+    var scentTags = [name, (parsed.original && parsed.original.house) ? parsed.original.house : ''].filter(Boolean);
+    histSave('scent', scentTitle, 'Fragrance dupes', scentTags, scentDupeContent, {'scent-input': name});
     scentRender(parsed, name);
     fetch(SHEET,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'search',email:localStorage.getItem('hub_email')||'anonymous',app:'ScentAI',perfume:name,time:new Date().toLocaleString()})}).catch(function(){});
   } catch(err) {
@@ -1787,7 +2482,7 @@ function adminLogin() {
   if (pw === ADMIN_PW) {
     document.getElementById('admin-lock').style.display = 'none';
     document.getElementById('admin-panel').classList.add('unlocked');
-    document.getElementById('admin-logged-in').value = '1';
+    // admin session tracked via JS variable
     var email = localStorage.getItem('hub_email') || 'Not registered';
     document.getElementById('adm-device-email').textContent = email;
     admRefreshAll();
@@ -1819,6 +2514,10 @@ function switchScreen(id) {
   document.getElementById('screen-' + id).scrollTop = 0;
   if (id === 'admin' && document.getElementById('admin-panel').classList.contains('unlocked')) {
     admRefreshAll();
+  }
+  if (id === 'history') {
+    histUpdateCount();
+    histRender();
   }
 }
 
@@ -1880,7 +2579,6 @@ function admActivatePro() {
 async function checkProFromSheet() {
   var email = localStorage.getItem('hub_email');
   if (!email) return;
-  // If already Pro on all apps, no need to check
   if (isPro('style') && isPro('rest') && isPro('scent')) return;
   try {
     var url = SHEET + '?type=check_pro&email=' + encodeURIComponent(email) + '&t=' + Date.now();
@@ -1890,12 +2588,13 @@ async function checkProFromSheet() {
     if (data && data.isPro) {
       ['style','rest','scent'].forEach(function(app) {
         localStorage.setItem('hub_pro_' + app, '1');
+        // Clear pending badge now that Pro is active
+        localStorage.removeItem('hub_pending_txn_' + app);
         updateBar(app);
       });
-      showToast('Pro plan activated! Unlimited access unlocked ✦');
+      showToast('🎉 Pro activated! Unlimited access unlocked ✦');
     }
   } catch(e) {
-    // Sheet doesn't support GET check yet — fall back to local list
     checkAllProStatus();
   }
 }
@@ -2070,19 +2769,21 @@ bumpCount = function(app) {
 
 // Hidden input to track session
 document.addEventListener('DOMContentLoaded', function(){
-  // Add hidden session tracker
-  var inp = document.createElement('input');
-  inp.type = 'hidden'; inp.id = 'admin-logged-in'; inp.value = '0';
-  document.body.appendChild(inp);
+  // admin session tracked via adminSession variable
 });
 window.addEventListener('DOMContentLoaded', function() {
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function(){});
   updateAllBars();
-  checkAllProStatus(); // check local list first (instant)
-  checkProFromSheet(); // then check sheet (async — catches admin activations)
+  checkAllProStatus();
+  checkProFromSheet();
   initHub();
+  histUpdateCount();
   document.getElementById('upgrade-overlay').addEventListener('click', function(e){ if(e.target===this) closeUpgrade(); });
   document.getElementById('email-overlay').addEventListener('click', function(e){ if(e.target===this) skipHubEmail(); });
+  document.getElementById('saved-modal').addEventListener('click', function(e){ if(e.target===this) closeSavedModal(); });
+  document.getElementById('pay-verify-overlay').addEventListener('click', function(e){ if(e.target===this) closePayVerify(); });
+  // Show pending payment badge on load
+  ['style','rest','scent'].forEach(updateBar);
 });
 </script>
 </body>
