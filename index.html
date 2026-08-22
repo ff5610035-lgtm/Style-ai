@@ -578,7 +578,7 @@ body{
 .de-badges{display:flex;gap:6px;flex-wrap:wrap;}
 .de-badge{padding:2px 9px;border-radius:2px;font-size:10px;font-weight:500;font-family:'Inter',sans-serif;}
 .badge-match{background:#1a140a;color:var(--gold2);border:1px solid rgba(201,168,76,0.2);}
-.badge-type{background:rgba(245,239,230,0.04);color:rgba(245,239,230,0.4);}
+.badge-type{background:rgba(120,90,20,0.08);color:rgba(90,65,20,0.85);}
 .badge-time{background:rgba(6,214,160,0.06);color:#4caf7d;border:1px solid rgba(6,214,160,0.15);}
 .de-price{font-family:'Syne',sans-serif;font-size:24px;color:#4caf7d;line-height:1;}
 .de-save{font-size:10px;color:#4caf7d;font-weight:600;font-family:'Inter',sans-serif;}
@@ -586,8 +586,8 @@ body{
 .de-notes{display:grid;grid-template-columns:1fr 1fr 1fr;border-bottom:1px solid rgba(201,168,76,0.08);}
 .dn-col{padding:11px 14px;border-right:1px solid rgba(201,168,76,0.08);}
 .dn-col:last-child{border-right:none;}
-.dn-label{font-size:9px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:rgba(245,239,230,0.25);margin-bottom:4px;font-family:'Inter',sans-serif;}
-.dn-value{font-size:12px;color:rgba(245,239,230,0.55);line-height:1.5;font-family:'Inter',sans-serif;}
+.dn-label{font-size:9px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:rgba(90,65,20,0.55);margin-bottom:4px;font-family:'Inter',sans-serif;}
+.dn-value{font-size:12px;color:rgba(60,45,15,0.85);line-height:1.5;font-family:'Inter',sans-serif;}
 .de-meters{display:flex;gap:0;border-bottom:1px solid rgba(201,168,76,0.08);}
 .de-meter{flex:1;padding:10px 14px;border-right:1px solid rgba(201,168,76,0.08);}
 .de-meter:last-child{border-right:none;}
@@ -1621,7 +1621,7 @@ var MODEL = 'openai/gpt-oss-20b';
 
 /* ── GROQ API CALLER ── */
 async function groqCall(messages, maxTokens) {
-  var body = JSON.stringify({model:MODEL, max_tokens:maxTokens||2000, temperature:0.3, messages:messages});
+  var body = JSON.stringify({model:MODEL, max_tokens:maxTokens||2000, temperature:0.3, reasoning_effort:'low', messages:messages});
   var headers = {'Content-Type':'application/json','Authorization':'Bearer '+GROQ_KEY};
   var groqUrl = 'https://api.groq.com/openai/v1/chat/completions';
   
@@ -2274,7 +2274,7 @@ async function styleGo() {
   var usr = 'Generate 3 complete outfits. Gender:'+gender+', Occasion:'+occasion+', Style:'+(style||'Casual')+', Weather:'+(weather||'Mild')+', TOTAL BUDGET: Rs.'+budget+' for all 4 items combined, BodyType:'+(bodytype||'Average')+', TopSize:'+(topSz||'M')+', BottomSize:'+(botSz||'32')+', ShoeSize:'+(shoeSz||'8')+', Colors:'+(colorPref||'any')+', Brands:'+(brands||'any')+', FIT (MUST appear in every item name):'+(fitPref||'Regular')+', Notes:'+(extra||'none')+'. Generate exactly ' + outfitCount + ' outfits. IMPORTANT: Use real Indian market prices. T-shirt = Rs.399-799, not Rs.50. Total of all items must be within Rs.'+budget+'.\nJSON: {\"outfits\":[{\"name\":\"x\",\"description\":\"x\",\"vibe_tags\":[\"x\"],\"match_score\":90,\"style_tip\":\"x\",\"items\":[{\"category\":\"Top\",\"name\":\"SPECIFIC NAME\",\"brand\":\"x\",\"price\":599,\"why\":\"x\",\"amazon_search\":\"x\",\"flipkart_search\":\"x\",\"google_image_search\":\"x\"},{\"category\":\"Bottom\",\"name\":\"SPECIFIC NAME\",\"brand\":\"x\",\"price\":899,\"why\":\"x\",\"amazon_search\":\"x\",\"flipkart_search\":\"x\",\"google_image_search\":\"x\"},{\"category\":\"Shoes\",\"name\":\"SPECIFIC NAME\",\"brand\":\"x\",\"price\":1299,\"why\":\"x\",\"amazon_search\":\"x\",\"flipkart_search\":\"x\",\"google_image_search\":\"x\"},{\"category\":\"Accessory\",\"name\":\"SPECIFIC NAME\",\"brand\":\"x\",\"price\":399,\"why\":\"x\",\"amazon_search\":\"x\",\"flipkart_search\":\"x\",\"google_image_search\":\"x\"}]}]}';
   try {
     if (!GROQ_KEY) { throw new Error('NO_KEY'); }
-    var data = await groqCall([{role:'system',content:sys},{role:'user',content:usr}], outfitCount >= 5 ? 4000 : 2500);
+    var data = await groqCall([{role:'system',content:sys},{role:'user',content:usr}], outfitCount >= 5 ? 5000 : 3200);
     var raw = data.choices[0].message.content || '';
     var cleaned = raw.replace(/```json\s*/gi,'').replace(/```\s*/g,'').trim();
     var s = cleaned.indexOf('{'), e = cleaned.lastIndexOf('}');
@@ -2551,7 +2551,7 @@ function scentRender(data, searchTerm) {
       +'<div class="de-top"><div><div class="de-name">'+(d.name||'Unknown')+'</div><div class="de-brand">'+(d.brand||'')+(d.type?' · '+d.type:'')+'</div><div class="de-badges"><span class="de-badge badge-match">'+scent+'% Match</span>'+(d.sillage?'<span class="de-badge badge-type">'+d.sillage+'</span>':'')+(d.longevity?'<span class="de-badge badge-time">'+d.longevity+' hrs</span>':'')+'</div></div><div style="text-align:right;flex-shrink:0"><div class="de-price">'+(d.price||'₹499')+'</div>'+(d.savings_percent?'<div class="de-save">Save '+d.savings_percent+'%</div>':'')+(d.original_price?'<div class="de-was">'+d.original_price+'</div>':'')+'</div></div>'
       +'<div class="de-notes"><div class="dn-col"><div class="dn-label">Top Notes</div><div class="dn-value">'+(d.top_notes||'—')+'</div></div><div class="dn-col"><div class="dn-label">Heart Notes</div><div class="dn-value">'+(d.middle_notes||'—')+'</div></div><div class="dn-col"><div class="dn-label">Base Notes</div><div class="dn-value">'+(d.base_notes||'—')+'</div></div></div>'
       +'<div class="de-meters"><div class="de-meter"><div class="dm-label">Scent Match</div><div class="dm-bar"><div class="dm-fill" data-w="'+scent+'%" style="width:0%"></div></div><div class="dm-val">'+scent+'%</div></div><div class="de-meter"><div class="dm-label">Longevity</div><div class="dm-bar"><div class="dm-fill" data-w="'+longPct+'%" style="width:0%"></div></div><div class="dm-val">'+longPct+'%</div></div><div class="de-meter"><div class="dm-label">Value</div><div class="dm-bar"><div class="dm-fill" data-w="'+valPct+'%" style="width:0%"></div></div><div class="dm-val">'+valPct+'%</div></div></div>'
-      +(d.scent_similarity||d.why_buy?'<div class="de-why">'+(d.scent_similarity||'')+(d.why_buy?'<br/><span style="font-style:normal;font-family:Outfit,sans-serif;font-size:12px;color:rgba(245,239,230,0.5);">Why buy: '+d.why_buy+'</span>':'')+'</div>':'')
+      +(d.scent_similarity||d.why_buy?'<div class="de-why">'+(d.scent_similarity||'')+(d.why_buy?'<br/><span style="font-style:normal;font-family:Outfit,sans-serif;font-size:12px;color:rgba(90,65,20,0.75);">Why buy: '+d.why_buy+'</span>':'')+'</div>':'')
       +'<div class="de-buy"><span class="de-buy-label">Buy</span>'
       +'<a class="buy-a ba-amz" href="'+amzUrl+'" target="_blank">Amazon</a>'
       +'<a class="buy-a ba-fk" href="'+fkUrl+'" target="_blank">Flipkart</a>'
