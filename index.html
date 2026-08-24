@@ -1395,10 +1395,10 @@ body{
 
       <!-- API Key -->
       <div class="adm-section">
-        <div class="adm-section-title">🔑 Groq API Key</div>
+        <div class="adm-section-title">🔑 Gemini API Key</div>
         <div id="adm-key-status" style="font-size:12px;margin-bottom:10px;padding:8px 12px;border-radius:var(--r);background:rgba(255,255,255,0.03);border:1px solid var(--border);">Checking key…</div>
         <div class="adm-row">
-          <input type="text" class="adm-input" id="adm-groq-input" placeholder="Paste new Groq key  (gsk_...)" style="font-family:'JetBrains Mono',monospace;font-size:11px;"/>
+          <input type="text" class="adm-input" id="adm-groq-input" placeholder="Paste new Gemini key (AQ.... or AIza...)" style="font-family:'JetBrains Mono',monospace;font-size:11px;"/>
           <button class="adm-btn" onclick="admSaveKey()">Save</button>
         </div>
         <div style="font-size:11px;color:rgba(255,255,255,0.22);margin-top:6px;line-height:1.6;">
@@ -1616,23 +1616,37 @@ body{
 /* ══════════════════════════════════════════
    CONFIG
 ══════════════════════════════════════════ */
-var GROQ_KEY = localStorage.getItem('hub_groq_key') || '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';
-var MODEL = 'openai/gpt-oss-20b';
+var GEMINI_KEY = localStorage.getItem('hub_groq_key') || 'AQ.Ab8RN6I8Nn1_bjK3qBZfg84e770tF1_fTJqEypxXLf_E4Trf4g';
+var MODEL = 'gemini-2.5-flash';
 
-/* ── GROQ API CALLER ── */
+/* ── GEMINI API CALLER (kept function name groqCall so existing call sites don't need to change) ── */
 async function groqCall(messages, maxTokens) {
-  var body = JSON.stringify({model:MODEL, max_tokens:maxTokens||2000, temperature:0.3, reasoning_effort:'low', messages:messages});
-  var headers = {'Content-Type':'application/json','Authorization':'Bearer '+GROQ_KEY};
-  var groqUrl = 'https://api.groq.com/openai/v1/chat/completions';
-  
+  // Split out system message(s) and convert 'assistant' role -> 'model' for Gemini's format
+  var sysText = '';
+  var contents = [];
+  messages.forEach(function(m){
+    if (m.role === 'system') { sysText += (sysText?'\n':'') + m.content; }
+    else { contents.push({role: m.role === 'assistant' ? 'model' : 'user', parts:[{text:m.content}]}); }
+  });
+  var body = JSON.stringify({
+    contents: contents,
+    systemInstruction: sysText ? {parts:[{text:sysText}]} : undefined,
+    generationConfig: {maxOutputTokens:maxTokens||2000, temperature:0.3, responseMimeType:'application/json'}
+  });
+  var headers = {'Content-Type':'application/json'};
+  var geminiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/'+MODEL+':generateContent?key='+GEMINI_KEY;
+
   // Check if we are hosted (not file://)
   var isHosted = location.protocol === 'https:' || location.protocol === 'http:';
-  
+
   if (isHosted) {
     // Direct call works when hosted
-    var r = await fetch(groqUrl, {method:'POST', headers:headers, body:body});
+    var r = await fetch(geminiUrl, {method:'POST', headers:headers, body:body});
     if (!r.ok) { var e = await r.json().catch(function(){return{};}); if(r.status===401||r.status===403) throw new Error('AUTH_ERR'); throw new Error(e.error?e.error.message:'API error'); }
-    return await r.json();
+    var j = await r.json();
+    var text = (j.candidates && j.candidates[0] && j.candidates[0].content && j.candidates[0].content.parts && j.candidates[0].content.parts[0].text) || '';
+    // Shim into OpenAI-style shape so existing call sites (data.choices[0].message.content) keep working
+    return {choices:[{message:{content:text}}]};
   } else {
     // Running as local file — show hosting instructions
     throw new Error('LOCAL_FILE');
@@ -2273,7 +2287,7 @@ async function styleGo() {
     ' SPECIFICITY RULES: Item names MUST follow this format: [Brand] + [Gender] + [Fit] + [Style Descriptor] + [Type] + [Color/Pattern]. NEVER write just "Cargo Pants" or "T-shirt" — always include brand + fit + color. ' + priceGuide + ' TOTAL of all 4 items MUST stay within Rs.' + budget + '. JSON only. No markdown.';
   var usr = 'Generate 3 complete outfits. Gender:'+gender+', Occasion:'+occasion+', Style:'+(style||'Casual')+', Weather:'+(weather||'Mild')+', TOTAL BUDGET: Rs.'+budget+' for all 4 items combined, BodyType:'+(bodytype||'Average')+', TopSize:'+(topSz||'M')+', BottomSize:'+(botSz||'32')+', ShoeSize:'+(shoeSz||'8')+', Colors:'+(colorPref||'any')+', Brands:'+(brands||'any')+', FIT (MUST appear in every item name):'+(fitPref||'Regular')+', Notes:'+(extra||'none')+'. Generate exactly ' + outfitCount + ' outfits. IMPORTANT: Use real Indian market prices. T-shirt = Rs.399-799, not Rs.50. Total of all items must be within Rs.'+budget+'.\nJSON: {\"outfits\":[{\"name\":\"x\",\"description\":\"x\",\"vibe_tags\":[\"x\"],\"match_score\":90,\"style_tip\":\"x\",\"items\":[{\"category\":\"Top\",\"name\":\"SPECIFIC NAME\",\"brand\":\"x\",\"price\":599,\"why\":\"x\",\"amazon_search\":\"x\",\"flipkart_search\":\"x\",\"google_image_search\":\"x\"},{\"category\":\"Bottom\",\"name\":\"SPECIFIC NAME\",\"brand\":\"x\",\"price\":899,\"why\":\"x\",\"amazon_search\":\"x\",\"flipkart_search\":\"x\",\"google_image_search\":\"x\"},{\"category\":\"Shoes\",\"name\":\"SPECIFIC NAME\",\"brand\":\"x\",\"price\":1299,\"why\":\"x\",\"amazon_search\":\"x\",\"flipkart_search\":\"x\",\"google_image_search\":\"x\"},{\"category\":\"Accessory\",\"name\":\"SPECIFIC NAME\",\"brand\":\"x\",\"price\":399,\"why\":\"x\",\"amazon_search\":\"x\",\"flipkart_search\":\"x\",\"google_image_search\":\"x\"}]}]}';
   try {
-    if (!GROQ_KEY) { throw new Error('NO_KEY'); }
+    if (!GEMINI_KEY) { throw new Error('NO_KEY'); }
     var data = await groqCall([{role:'system',content:sys},{role:'user',content:usr}], outfitCount >= 5 ? 5000 : 3200);
     var raw = data.choices[0].message.content || '';
     var cleaned = raw.replace(/```json\s*/gi,'').replace(/```\s*/g,'').trim();
@@ -2302,7 +2316,7 @@ async function styleGo() {
   } catch(err) {
     document.getElementById('style-loading').classList.remove('show');
     var msg = err.message;
-    if(msg==='NO_KEY'||msg==='AUTH_ERR') { msg = '🔑 API key missing or invalid.<br>Go to <strong>Admin → 🔑 Groq API Key</strong> and paste a valid key.'; document.getElementById('style-results').innerHTML = '<div class="error-box">⚠️ ' + msg + '</div>'; }
+    if(msg==='NO_KEY'||msg==='AUTH_ERR') { msg = '🔑 API key missing or invalid.<br>Go to <strong>Admin → 🔑 Gemini API Key</strong> and paste a valid key.'; document.getElementById('style-results').innerHTML = '<div class="error-box">⚠️ ' + msg + '</div>'; }
     else if(msg==='LOCAL_FILE') { document.getElementById('style-results').innerHTML = '<div style="padding:16px;background:#fff8e8;border:1px solid rgba(180,140,40,0.3);border-radius:12px;font-size:13px;line-height:1.8;color:#5a3800;">' +
         '<strong style="font-size:15px;">📁 File needs to be hosted online</strong><br><br>' +
         'Your browser blocks API calls from local files. Fix in 60 seconds:<br><br>' +
@@ -2430,7 +2444,7 @@ async function restGenerate(tool, btn) {
   var spin = document.getElementById(tool + '-spin'), out = document.getElementById(tool + '-out');
   if (spin) spin.classList.add('show'); if (out) out.innerHTML = '';
   try {
-    if (!GROQ_KEY) { throw new Error('NO_KEY'); }
+    if (!GEMINI_KEY) { throw new Error('NO_KEY'); }
     var data = await groqCall([{role:'user',content:prompt}], 1200);
     if (spin) spin.classList.remove('show');
     if (out) out.textContent = data.choices[0].message.content;
@@ -2487,7 +2501,7 @@ async function scentFind() {
   var sys = 'You are a master perfumer with encyclopedic knowledge of fragrances and the Indian market. Find affordable dupes for expensive perfumes.\nRULES:\n- Dupes must be GENUINELY available in India — only recommend products you are CERTAIN are sold on Amazon.in, Flipkart, or Nykaa right now\n- Prefer POPULAR well-known dupes that are widely stocked: Armaf Club de Nuit, Lattafa Asad, Rasasi Royale, Al Haramain Amber Oud, Swiss Arabian Shaghaf\n- Names must be SPECIFIC with ml size: "Armaf Club de Nuit Intense Man EDP 105ml"\n- Real brands only: Armaf, Lattafa, Rasasi, Al Haramain, Swiss Arabian, Ajmal, Titan Skinn, Fogg Scent, Denver, Wild Stone, Engage\n- Notes must be SPECIFIC ingredients: "bergamot, pink pepper, apple" not just "citrus"\n- match_score: 70-95 realistic range\n- SEARCH QUERIES: amazon_search should be just "brand name type" e.g. "Armaf Club de Nuit EDP", flipkart_search same, nykaa_search just the brand name e.g. "Armaf". Keep search queries SHORT so results always show up.\n- JSON only, no markdown';
   var usr = 'Perfume: "'+name+'"\nDupe budget: '+budgetMap[budget]+'\nPriority: '+prefMap[pref]+'\n\nIMPORTANT: Only recommend dupes that are WIDELY AVAILABLE in India — products that are definitely in stock on Amazon.in, Flipkart, Nykaa. Prefer popular well-known dupes over obscure ones. Keep search queries SHORT (brand + product type only).\n\nJSON only:\n{\"original\":{\"name\":\"x\",\"house\":\"x\",\"type\":\"EDT/EDP\",\"price_india\":\"Rs.X\",\"top_notes\":\"x,x\",\"middle_notes\":\"x,x\",\"base_notes\":\"x,x\",\"character\":\"2 sentences\"},\"dupes\":[{\"rank\":1,\"name\":\"Armaf Club de Nuit Intense Man EDP 105ml\",\"brand\":\"Armaf\",\"type\":\"EDP\",\"price\":\"Rs.X\",\"original_price\":\"Rs.X\",\"savings_percent\":80,\"match_score\":88,\"availability\":\"Amazon India / Nykaa\",\"top_notes\":\"x,x\",\"middle_notes\":\"x,x\",\"base_notes\":\"x,x\",\"scent_similarity\":\"2 sentences\",\"why_buy\":\"1 sentence\",\"longevity\":\"X-Y hours\",\"sillage\":\"Soft/Moderate/Strong\",\"amazon_search\":\"Armaf Club de Nuit EDP\",\"flipkart_search\":\"Armaf Club de Nuit\",\"nykaa_search\":\"Armaf\"},{\"rank\":2},{\"rank\":3}]}';
   try {
-    if (!GROQ_KEY) { throw new Error('NO_KEY'); }
+    if (!GEMINI_KEY) { throw new Error('NO_KEY'); }
     var data = await groqCall([{role:'system',content:sys},{role:'user',content:usr}], 3000);
     var raw = data.choices[0].message.content || '';
     var cleaned = raw.replace(/```json\s*/gi,'').replace(/```\s*/g,'').trim();
@@ -2525,7 +2539,7 @@ async function scentFind() {
         '2. Settings → Pages → Deploy from main branch<br>' +
         '3. Visit your-username.github.io/repo-name ✅' +
         '</div>'; }
-    else { if(scentErr==='NO_KEY'||scentErr==='AUTH_ERR') scentErr = '🔑 API key missing or invalid. Go to Admin → 🔑 Groq API Key and paste a valid key.'; document.getElementById('scent-results').innerHTML = '<div class="scent-error-box">'+scentErr+'</div>'; }
+    else { if(scentErr==='NO_KEY'||scentErr==='AUTH_ERR') scentErr = '🔑 API key missing or invalid. Go to Admin → 🔑 Gemini API Key and paste a valid key.'; document.getElementById('scent-results').innerHTML = '<div class="scent-error-box">'+scentErr+'</div>'; }
   }
   btn.disabled = false; btn.textContent = '◆ Find Dupes Now';
   updateBar('scent');
@@ -2583,8 +2597,8 @@ function admSaveKey() {
   var input = document.getElementById('adm-groq-input');
   var newKey = input ? input.value.trim() : '';
   if (!newKey) { showToast('Paste a key first!'); return; }
-  if (!newKey.startsWith('gsk_')) { showToast('❌ Key must start with gsk_  — copy it from console.groq.com'); return; }
-  GROQ_KEY = newKey;
+  if (!newKey.startsWith('AQ.') && !newKey.startsWith('AIza')) { showToast('❌ Key must start with AQ. or AIza — copy it from aistudio.google.com'); return; }
+  GEMINI_KEY = newKey;
   localStorage.setItem('hub_groq_key', newKey);
   input.value = '';
   admRefreshKeyStatus();
@@ -2594,12 +2608,12 @@ function admSaveKey() {
 function admRefreshKeyStatus() {
   var el = document.getElementById('adm-key-status');
   if (!el) return;
-  if (!GROQ_KEY) {
+  if (!GEMINI_KEY) {
     el.style.borderColor = 'rgba(255,68,102,0.4)';
     el.innerHTML = '<span style="color:#f87171;">❌ No key — app cannot generate until you paste one below.</span>';
   } else {
     el.style.borderColor = 'rgba(0,229,160,0.3)';
-    el.innerHTML = '<span style="color:#4ade80;">✅ Key active:</span> <span style="font-family:Space Mono,monospace;font-size:10px;color:var(--muted2);">' + GROQ_KEY.substring(0,14) + '••••••••••••</span>';
+    el.innerHTML = '<span style="color:#4ade80;">✅ Key active:</span> <span style="font-family:Space Mono,monospace;font-size:10px;color:var(--muted2);">' + GEMINI_KEY.substring(0,14) + '••••••••••••</span>';
   }
 }
 
